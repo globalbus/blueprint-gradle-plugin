@@ -20,16 +20,17 @@ To use this plugin, you must
 
 ### Applying the plugin
 
-    buildscript{
-        repositories{
-            jcenter()
-            mavenCentral()
+    buildscript {
+      repositories {
+        maven {
+          url "https://plugins.gradle.org/m2/"
         }
-        dependencies {
-            classpath 'info.globalbus:blueprint-gradle-plugin:0.0.1'
-        }
+      }
+      dependencies {
+        classpath "gradle.plugin.info.globalbus:blueprint-gradle-plugin:0.0.1"
+      }
     }
-    apply plugin: 'info.globalbus:blueprint-gradle-plugin'
+    apply plugin: "info.globalbus.blueprint-gradle"
     
 ### Plugin options
 
