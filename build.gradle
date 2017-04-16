@@ -1,0 +1,85 @@
+plugins {
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish" version "0.9.7"
+}
+apply plugin: 'maven'
+
+gradlePlugin {
+    plugins {
+        blueprintGradlePlugin {
+            id = "info.globalbus.blueprint-gradle"
+            implementationClass = "info.globalbus.blueprint.plugin.gradle.BlueprintPlugin"
+        }
+    }
+}
+
+sourceCompatibility = 1.8
+
+group 'info.globalbus'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+pluginBundle {
+    website = 'https://github.com/globalbus/blueprint-gradle-plugin/'
+    vcsUrl = 'https://github.com/globalbus/blueprint-gradle-plugin.git'
+    description = 'Gradle port of apache blueprint-maven-plugin'
+    tags = ['blueprint', 'camel']
+
+    plugins {
+        blueprintGradlePlugin {
+            id = 'info.globalbus.blueprint-gradle'
+            displayName = 'Blueprint Gradle Plugin'
+        }
+    }
+}
+
+
+dependencies {
+    compile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.annotation.impl', version: '1.0.1'
+    compile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.annotation.api', version: '1.0.1'
+    testCompile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.api', version: '1.0.1'
+    testCompile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.core', version: '1.8.0'
+    testCompile group: 'org.apache.aries.transaction', name: 'org.apache.aries.transaction.blueprint', version: '1.1.0'
+    testCompile group: 'org.apache.aries.jpa', name: 'org.apache.aries.jpa.blueprint.aries', version: '1.0.4'
+    testCompile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.cm', version: '1.1.0'
+    compile group: 'org.apache.aries.blueprint', name: 'blueprint-maven-plugin-annotation', version: '1.1.0'
+    compile group: 'org.apache.aries.blueprint', name: 'blueprint-maven-plugin-spi', version: '1.0.0'
+
+
+    compile group: 'javax.inject', name: 'javax.inject', version: '1'
+    compile group: 'javax.transaction', name: 'javax.transaction-api', version: '1.2'
+    compile group: 'javax.enterprise', name: 'cdi-api', version: '1.2'
+    compile group: 'javax.persistence', name: 'persistence-api', version: '1.0.2'
+    compile group: 'org.ops4j.pax.cdi', name: 'pax-cdi-api', version: '0.12.0'
+    compile group: 'org.osgi', name: 'osgi.cmpn', version: '6.0.0'
+    compile group: 'org.osgi', name: 'org.osgi.core', version: '6.0.0'
+    compile group: 'org.apache.xbean', name: 'xbean-finder', version: '4.5'
+    compile group: 'org.ow2.asm', name: 'asm', version: '5.2'
+    compile (group: 'org.springframework', name: 'spring-context', version: '4.3.7.RELEASE') {
+        exclude module: 'spring-aop'
+        exclude module: 'spring-core'
+        exclude module: 'spring-expression'
+    }
+    compile (group: 'org.springframework', name: 'spring-tx', version: '4.3.7.RELEASE') {
+        exclude module: 'spring-aop'
+        exclude module: 'spring-core'
+        exclude module: 'spring-expression'
+    }
+    compile group: 'javax.transaction.cdi', name: 'javax.transaction.cdi-api', version: '1.2-b03'
+
+    compile group: 'org.apache.camel', name: 'camel-blueprint', version: '2.17.0'
+    compile group: 'com.google.guava', name: 'guava', version: '21.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
+    testCompile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'com.google.inject', name: 'guice', version: '4.1.0'
+
+
+    compile gradleApi()
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.16'
+}
+
