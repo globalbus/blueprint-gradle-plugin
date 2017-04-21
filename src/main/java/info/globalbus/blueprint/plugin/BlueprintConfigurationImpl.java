@@ -18,13 +18,12 @@
  */
 package info.globalbus.blueprint.plugin;
 
+import info.globalbus.blueprint.plugin.gradle.PluginSettings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import info.globalbus.blueprint.plugin.gradle.PluginSettings;
 import org.apache.aries.blueprint.plugin.spi.Activation;
 import org.apache.aries.blueprint.plugin.spi.BlueprintConfiguration;
-import org.apache.xbean.finder.ClassFinder;
 
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +33,7 @@ import java.util.Set;
 @Getter
 public class BlueprintConfigurationImpl implements BlueprintConfiguration {
     private final PluginSettings extension;
-    private ClassFinder finder;
+    private ClassLoader finder;
 
     @Override
     public Set<String> getNamespaces() {

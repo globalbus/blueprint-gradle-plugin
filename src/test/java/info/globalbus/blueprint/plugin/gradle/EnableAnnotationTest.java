@@ -22,7 +22,6 @@ import info.globalbus.blueprint.plugin.BlueprintConfigurationImpl;
 import info.globalbus.blueprint.plugin.model.Blueprint;
 import info.globalbus.blueprint.plugin.test.transactionenable.TxBean;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.xbean.finder.ClassFinder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -60,8 +59,7 @@ public class EnableAnnotationTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        ClassFinder classFinder = new ClassFinder(EnableAnnotationTest.class.getClassLoader());
-        beanClasses = findClasses(classFinder, Collections.singletonList(
+        beanClasses = findClasses(EnableAnnotationTest.class.getClassLoader(), Collections.singletonList(
                 TxBean.class.getPackage().getName()));
     }
 

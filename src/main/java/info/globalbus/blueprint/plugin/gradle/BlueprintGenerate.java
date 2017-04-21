@@ -1,13 +1,13 @@
 package info.globalbus.blueprint.plugin.gradle;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import info.globalbus.blueprint.plugin.BlueprintConfigurationImpl;
 import info.globalbus.blueprint.plugin.model.Blueprint;
-import org.apache.xbean.finder.ClassFinder;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.tasks.*;
 
 import java.io.File;
@@ -20,15 +20,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @CacheableTask
 public class BlueprintGenerate extends DefaultTask {
 
-    @InputDirectory
     File sourcesDir = new File(getProject().getProjectDir(), "src/main/java");
-    @OutputDirectory
+
     File generatedDir = new File(getProject().getBuildDir(), "generatedsources");
+
+    @OutputDirectory
+    public File getGeneratedDir(){
+        return generatedDir;
+    }
+
+    @InputDirectory
+    public File getSourcesDir(){
+        return sourcesDir;
+    }
 
     @TaskAction
     public void blueprintGenerate() {
@@ -83,7 +93,7 @@ public class BlueprintGenerate extends DefaultTask {
             List<String> toScan = getPackagesToScan();
 
             try {
-                ClassFinder classFinder = createProjectScopeFinder();
+                ClassLoader classFinder = createProjectScopeFinder();
                 BlueprintConfigurationImpl blueprintConfiguration = new BlueprintConfigurationImpl(extension, classFinder);
                 Set<Class<?>> classes = FilteredClassFinder.findClasses(classFinder, toScan);
                 Blueprint blueprint = new Blueprint(blueprintConfiguration, classes);
@@ -112,17 +122,18 @@ public class BlueprintGenerate extends DefaultTask {
             }
         }
 
-        private ClassFinder createProjectScopeFinder() throws MalformedURLException {
+        private ClassLoader createProjectScopeFinder() throws MalformedURLException {
             List<URL> urls = new ArrayList<>();
 
             urls.add(getClassesDir(getProject()).toURI().toURL());
-
-            for (File artifact : getProject().getConfigurations().getByName("compile").getResolvedConfiguration().getFiles()) {
+            //
+            for (File artifact : getProject().getConfigurations().getByName("compile")
+                    .getAllDependencies().withType(ProjectDependency.class).stream().map(d-> getClassesDir(d.getDependencyProject())).collect(Collectors.toList())) {
                 urls.add(artifact.toURI().toURL());
             }
-
             ClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
-            return new ClassFinder(loader, urls);
+
+            return loader;
         }
 
     }

@@ -27,9 +27,7 @@ import info.globalbus.blueprint.plugin.test.bean.BasicBean;
 import info.globalbus.blueprint.plugin.test.bean.BeanWithCallbackMethods;
 import info.globalbus.blueprint.plugin.test.bean.NamedBean;
 import info.globalbus.blueprint.plugin.test.bean.SimpleProducedBean;
-import info.globalbus.blueprint.plugin.test.referencelistener.ReferenceListenerToProduceWithoutAnnotation;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.xbean.finder.ClassFinder;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -70,12 +68,11 @@ public class BlueprintFileWriterTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        ClassFinder classFinder = new ClassFinder(BlueprintFileWriterTest.class.getClassLoader());
         long start = System.currentTimeMillis();
-        Set<Class<?>> beanClasses = FilteredClassFinder.findClasses(classFinder, Arrays.asList(
-                MyBean1.class.getPackage().getName(),
-                ReferenceListenerToProduceWithoutAnnotation.class.getPackage().getName()
-        ));
+        Set<Class<?>> beanClasses = FilteredClassFinder.findClasses(BlueprintFileWriterTest.class.getClassLoader(),
+                Collections.singletonList(
+                        MyBean1.class.getPackage().getName()
+                ));
         Set<String> namespaces = new HashSet<>(Arrays.asList(NS_JPA, NS_TX1));
         Map<String, String> customParameters = new HashMap<>();
         customParameters.put("ex.t", "1");

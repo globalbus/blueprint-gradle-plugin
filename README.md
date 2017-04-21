@@ -8,7 +8,7 @@ Options are mostly the same as in original
 
 ### Tasks
 
-| Name | Description | Dependecy |
+| Name | Description | Dependency |
 | ---- | ----------- | --------- |
 | blueprintGenerate | Generate blueprint files from annotations | classes depends on blueprintGenerate |
 
@@ -36,7 +36,7 @@ To use this plugin, you must
 
 | Option | Default value | Description |
 | ------ | ------------- | ----------- |
-| scanPaths | null | Paths to search annotations. If not provided, will be resolved from source directory
+| scanPaths | null | Paths to search annotations. If not provided, will be resolved from source directory |
 | namespaces | null | Which extension namespaces should the plugin support |
 | generatedFileName | "autowire.xml" | Name of file to write |
 | defaultActivation | null | Lazy or Eager type of blueprint activation (eager is blueprint default, if not specified) |

@@ -16,7 +16,7 @@ gradlePlugin {
 sourceCompatibility = 1.8
 
 group 'info.globalbus'
-version '0.0.1'
+version '0.0.2'
 
 repositories {
     mavenCentral()
@@ -56,8 +56,7 @@ dependencies {
     compile group: 'org.ops4j.pax.cdi', name: 'pax-cdi-api', version: '0.12.0'
     compile group: 'org.osgi', name: 'osgi.cmpn', version: '6.0.0'
     compile group: 'org.osgi', name: 'org.osgi.core', version: '6.0.0'
-    compile group: 'org.apache.xbean', name: 'xbean-finder', version: '4.5'
-    compile group: 'org.ow2.asm', name: 'asm', version: '5.2'
+    compile group: 'io.github.lukehutch', name: 'fast-classpath-scanner', version: '2.0.19'
     compile (group: 'org.springframework', name: 'spring-context', version: '4.3.7.RELEASE') {
         exclude module: 'spring-aop'
         exclude module: 'spring-core'
