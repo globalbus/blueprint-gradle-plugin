@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.tasks.*;
 
 import java.io.File;
@@ -20,13 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @CacheableTask
 public class BlueprintGenerate extends DefaultTask {
 
-    File sourcesDir = new File(getProject().getProjectDir(), "src/main/java");
+    File sourcesDir = new File(getProject().getBuildDir(), "classes");
 
     File generatedDir = new File(getProject().getBuildDir(), "generatedsources");
 
@@ -61,7 +59,7 @@ public class BlueprintGenerate extends DefaultTask {
 
         private List<String> getPackagesToScan() {
             List<String> toScan = extension.getScanPaths();
-            if (toScan == null || toScan.size() == 0 || toScan.iterator().next() == null) {
+            if (toScan == null || toScan.isEmpty() || toScan.iterator().next() == null) {
                 log.info("Scan paths not specified - searching for packages");
                 Set<String> packages = PackageFinder.findPackagesInSources(getSourceDir());
                 if (packages.contains(null)) {
@@ -127,13 +125,11 @@ public class BlueprintGenerate extends DefaultTask {
 
             urls.add(getClassesDir(getProject()).toURI().toURL());
             //
-            for (File artifact : getProject().getConfigurations().getByName("compile")
-                    .getAllDependencies().withType(ProjectDependency.class).stream().map(d-> getClassesDir(d.getDependencyProject())).collect(Collectors.toList())) {
+            for (File artifact : getProject().getConfigurations().getByName("compile").getResolvedConfiguration().getFiles()) {
                 urls.add(artifact.toURI().toURL());
             }
-            ClassLoader loader = new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
 
-            return loader;
+            return new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
         }
 
     }
