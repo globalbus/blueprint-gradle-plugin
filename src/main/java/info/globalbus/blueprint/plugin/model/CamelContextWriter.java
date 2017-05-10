@@ -23,8 +23,8 @@ public class CamelContextWriter implements XmlWriter {
     public void write(XMLStreamWriter writer) throws XMLStreamException {
         writer.writeStartElement("camelContext");
         writer.writeDefaultNamespace(NS_CAMEL);
-        if(StringUtils.isNotBlank(camelOpts.get("id").toString()))
-            writer.writeAttribute("id", camelOpts.get("id").toString());
+        if(StringUtils.isNotBlank(camelOpts.get("contextId").toString()))
+            writer.writeAttribute("id", camelOpts.get("contextId").toString());
         writer.writeStartElement("package");
         writer.writeCharacters(scanPackages.stream().collect(Collectors.joining(",")));
         writer.writeEndElement();

@@ -18,6 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.handlers.config;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.aries.blueprint.annotation.config.Config;
 import org.apache.aries.blueprint.annotation.config.DefaultProperty;
 import org.apache.aries.blueprint.plugin.spi.XmlWriter;
@@ -25,14 +26,11 @@ import org.apache.aries.blueprint.plugin.spi.XmlWriter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+@RequiredArgsConstructor
 class ConfigWriter implements XmlWriter {
 
-    private static final String CONFIG_NS = "http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0";
+    private static final String CONFIG_NS = "http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0";
     private final Config config;
-
-    ConfigWriter(Config config) {
-        this.config = config;
-    }
 
     @Override
     public void write(XMLStreamWriter writer) throws XMLStreamException {

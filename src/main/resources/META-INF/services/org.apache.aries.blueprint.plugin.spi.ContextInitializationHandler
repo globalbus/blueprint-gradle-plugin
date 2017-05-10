@@ -17,3 +17,4 @@
 
 info.globalbus.blueprint.plugin.handlers.blueprint.BlueprintInitialization
 info.globalbus.blueprint.plugin.handlers.camel.CamelContext
+info.globalbus.blueprint.plugin.handlers.config.PropertyDefaults

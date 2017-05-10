@@ -52,6 +52,7 @@ class BlueprintFileWriter {
     private void generateXml(Blueprint blueprint) {
         try {
             writer.writeStartDocument();
+            writer.writeCharacters("\n");
             blueprint.write(writer);
             writer.writeEndDocument();
             writer.close();

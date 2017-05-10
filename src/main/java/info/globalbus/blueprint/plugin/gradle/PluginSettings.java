@@ -37,5 +37,5 @@ public class PluginSettings {
      */
     private String generatedDir = "OSGI-INF/blueprint/";
 
-    private Map<String, Object> camelOpts;
+    private Map<String, Object> customOptions;
 }

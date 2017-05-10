@@ -25,12 +25,12 @@ public class CamelContext implements ContextInitializationHandler {
     private void initContext(Blueprint contextEnricher) {
         BlueprintConfigurationImpl configuration = contextEnricher.getBlueprintConfiguration();
         List<String> toScan = configuration.getExtension().getScanPaths();
-        Map<String, Object> camelOpts = configuration.getExtension().getCamelOpts();
-        if (toScan == null || toScan.isEmpty() || camelOpts == null) {
+        Map<String, Object> customOptions = configuration.getExtension().getCustomOptions();
+        if (toScan == null || toScan.isEmpty() || customOptions == null) {
             return;
         }
-        if (!toScan.isEmpty()) {
-            CamelContextWriter writer = new CamelContextWriter(toScan, camelOpts);
+        if (!toScan.isEmpty() && customOptions.containsKey("contextId")) {
+            CamelContextWriter writer = new CamelContextWriter(toScan, customOptions);
             contextEnricher.addBlueprintContentWriter(CamelContextWriter.class.getName(), writer);
         }
     }
