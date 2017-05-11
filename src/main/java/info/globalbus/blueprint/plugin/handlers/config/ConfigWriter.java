@@ -36,6 +36,7 @@ class ConfigWriter implements XmlWriter {
     public void write(XMLStreamWriter writer) throws XMLStreamException {
         writer.writeStartElement("property-placeholder");
         writer.writeDefaultNamespace(CONFIG_NS);
+        writer.writeAttribute("id", "blueprint-properties");
         writer.writeAttribute("persistent-id", config.pid());
         if (!"${".equals(config.placeholderPrefix())) {
             writer.writeAttribute("placeholder-prefix", config.placeholderPrefix());

@@ -9,6 +9,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.aries.blueprint.annotation.config.Config;
 import org.apache.aries.blueprint.annotation.config.ConfigProperties;
+import org.apache.aries.blueprint.annotation.config.DefaultProperty;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.ContextInitializationHandler;
 
@@ -30,12 +31,14 @@ public class PropertyDefaults implements ContextInitializationHandler {
         }
         if (!toScan.isEmpty() && customOptions.containsKey("properties")) {
             List<?> propertiesList = (List<?>) customOptions.get("properties");
-            List<RuntimeConfig> configs = new ArrayList<>();
+            Map<?, ?> firstElement = (Map<?, ?>) propertiesList.get(0);
+            contextEnricher.addBlueprintContentWriter("cm/property-placeholder", new ConfigWriter(new RuntimeConfig(firstElement)));
+            List<RuntimeProperties> configs = new ArrayList<>();
             for (Object prop : propertiesList) {
                 Map<?, ?> map = (Map<?, ?>) prop;
-                configs.add(new RuntimeConfig(map));
+                configs.add(new RuntimeProperties(map));
             }
-            configs.forEach(c->
+            configs.forEach(c ->
                 contextEnricher.addBlueprintContentWriter("properties/" + c.id(), writer -> {
                     writer.writeEmptyElement("cm-properties");
                     writer.writeDefaultNamespace("http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.2.0");
@@ -47,7 +50,7 @@ public class PropertyDefaults implements ContextInitializationHandler {
     }
 
     @RequiredArgsConstructor
-    class RuntimeConfig implements ConfigProperties{
+    class RuntimeProperties implements ConfigProperties {
         final Map<?, ?> map;
 
         @Override
@@ -62,11 +65,69 @@ public class PropertyDefaults implements ContextInitializationHandler {
 
         @Override
         public boolean update() {
-            return false;
+            return true;
         }
 
         public String id() {
             return (String) map.get("id");
+        }
+    }
+
+    @RequiredArgsConstructor
+    class RuntimeConfig implements Config {
+        final Map<?, ?> map;
+
+        @Override
+        public String pid() {
+            return (String) map.get("pid");
+        }
+
+        public String id() {
+            return (String) map.get("id");
+        }
+
+        @Override
+        public String updatePolicy() {
+            return "reload";
+        }
+
+        @Override
+        public String placeholderPrefix() {
+            return "${";
+        }
+
+        @Override
+        public String placeholderSuffix() {
+            return "}";
+        }
+
+        @Override
+        public DefaultProperty[] defaults() {
+            if (map.get("defaults") == null) {
+                return new DefaultProperty[0];
+            }
+            Map<?, ?> defaults = (Map<?, ?>) map.get("defaults");
+            return defaults.entrySet().stream().map(e -> new DefaultProperty(){
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return DefaultProperty.class;
+                }
+
+                @Override
+                public String key() {
+                    return String.valueOf(e.getKey());
+                }
+
+                @Override
+                public String value() {
+                    return String.valueOf(e.getValue());
+                }
+            }).toArray(DefaultProperty[]::new);
+        }
+
+        @Override
+        public Class<? extends Annotation> annotationType() {
+            return Config.class;
         }
     }
 }

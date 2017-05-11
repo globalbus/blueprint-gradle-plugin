@@ -15,7 +15,7 @@ public class BlueprintPlugin implements Plugin<Project> {
         SourceSet main = ((SourceSetContainer) target.getProperties().get("sourceSets")).getByName("main");
         main.getResources().srcDir(task.generatedDir);
         task.mustRunAfter("compileJava");
-        target.getTasks().getByName("classes").dependsOn(task);
+        target.getTasks().getByName("processResources").dependsOn(task);
     }
 
 }
