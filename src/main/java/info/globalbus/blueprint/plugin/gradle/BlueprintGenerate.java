@@ -7,7 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
+import org.gradle.api.java.archives.Manifest;
+import org.gradle.api.plugins.osgi.OsgiManifest;
 import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.bundling.Jar;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -104,6 +107,15 @@ public class BlueprintGenerate extends DefaultTask {
         private void writeBlueprintIfNeeded(Blueprint blueprint) throws Exception {
             if (blueprint.shouldBeGenerated()) {
                 writeBlueprint(blueprint);
+                Jar jarTask = (Jar)getProject().getTasks().getByName("jar");
+                Manifest manifest = jarTask.getManifest();
+                if(manifest!=null && manifest instanceof OsgiManifest){
+                    List<String> packages = new ArrayList<>();
+                    packages.addAll(blueprint.getGeneratedPackages());
+                    packages.add("*");
+                    ((OsgiManifest) manifest).instruction("Import-Package", packages.toArray(new String[0]));
+                }
+
             } else {
                 log.warn("Skipping blueprint generation because no beans were found");
             }
@@ -125,7 +137,7 @@ public class BlueprintGenerate extends DefaultTask {
 
             urls.add(getClassesDir(getProject()).toURI().toURL());
             //
-            for (File artifact : getProject().getConfigurations().getByName("compile").getResolvedConfiguration().getFiles()) {
+            for (File artifact : getProject().getConfigurations().getByName("runtime").getResolvedConfiguration().getFiles()) {
                 urls.add(artifact.toURI().toURL());
             }
 

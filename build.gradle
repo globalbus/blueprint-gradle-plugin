@@ -33,7 +33,7 @@ gradlePlugin {
 sourceCompatibility = 1.8
 
 group 'info.globalbus'
-version '0.0.3'
+version '0.0.10'
 
 repositories {
     mavenCentral()

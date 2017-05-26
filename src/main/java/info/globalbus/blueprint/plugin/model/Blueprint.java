@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter {
     private static final String NS_BLUEPRINT = "http://www.osgi.org/xmlns/blueprint/v1.0.0";
@@ -156,5 +157,9 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
 
     public boolean shouldBeGenerated() {
         return !getBeans().isEmpty() || !customWriters.isEmpty();
+    }
+
+    public List<String> getGeneratedPackages() {
+        return generatedBeans.stream().map(b -> b.clazz.getPackage().getName()).distinct().collect(Collectors.toList());
     }
 }
