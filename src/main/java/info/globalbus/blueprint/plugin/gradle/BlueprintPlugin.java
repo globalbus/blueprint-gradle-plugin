@@ -16,6 +16,8 @@ public class BlueprintPlugin implements Plugin<Project> {
         main.getResources().srcDir(task.generatedDir);
         task.mustRunAfter("compileJava");
         target.getTasks().getByName("processResources").dependsOn(task);
+        target.getTasks().getByName("jar").dependsOn(task);
+        task.getOutputs().upToDateWhen(v -> false);
     }
 
 }

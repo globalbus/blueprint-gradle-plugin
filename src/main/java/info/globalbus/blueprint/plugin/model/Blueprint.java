@@ -20,16 +20,24 @@ package info.globalbus.blueprint.plugin.model;
 
 import info.globalbus.blueprint.plugin.BlueprintConfigurationImpl;
 import info.globalbus.blueprint.plugin.handlers.Handlers;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import lombok.Getter;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.ContextInitializationHandler;
 import org.apache.aries.blueprint.plugin.spi.XmlWriter;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter {
     private static final String NS_BLUEPRINT = "http://www.osgi.org/xmlns/blueprint/v1.0.0";
@@ -38,6 +46,8 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
     private final Map<String, XmlWriter> customWriters = new HashMap<>();
     private final BlueprintConfigurationImpl blueprintConfiguration;
     private final List<Bean> generatedBeans = new ArrayList<>();
+    @Getter
+    private final Set<String> interfaces = new HashSet<>();
 
     Blueprint(BlueprintConfigurationImpl blueprintConfiguration, Class<?>... beanClasses) {
         this(blueprintConfiguration, Arrays.asList(beanClasses));
@@ -83,7 +93,8 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
     private boolean isFactoryMethod(Method method) {
         boolean isFactoryMethod = false;
         for (Class<? extends Annotation> factoryMethodAnnotationClass : Handlers.FACTORY_METHOD_ANNOTATION_CLASSES) {
-            Annotation annotation = AnnotationHelper.findAnnotation(method.getAnnotations(), factoryMethodAnnotationClass);
+            Annotation annotation = AnnotationHelper.findAnnotation(method.getAnnotations(),
+                factoryMethodAnnotationClass);
             if (annotation != null) {
                 isFactoryMethod = true;
                 break;
@@ -112,7 +123,7 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
 
     @Override
     public void addBean(String id, Class<?> clazz) {
-        beanRefStore.addBean(new BeanRef(clazz, id, new Annotation[]{}));
+        beanRefStore.addBean(new BeanRef(clazz, id, new Annotation[] {}));
     }
 
     @Override
@@ -151,7 +162,8 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
         writer.writeStartElement("blueprint");
         writer.writeDefaultNamespace(NS_BLUEPRINT);
         if (blueprintConfiguration.getDefaultActivation() != null) {
-            writer.writeAttribute("default-activation", blueprintConfiguration.getDefaultActivation().name().toLowerCase());
+            writer.writeAttribute("default-activation", blueprintConfiguration.getDefaultActivation().name()
+                .toLowerCase());
         }
     }
 
@@ -159,7 +171,9 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
         return !getBeans().isEmpty() || !customWriters.isEmpty();
     }
 
-    public List<String> getGeneratedPackages() {
-        return generatedBeans.stream().map(b -> b.clazz.getPackage().getName()).sorted().distinct().collect(Collectors.toList());
+    public Set<String> getGeneratedPackages() {
+        Set<String> beans = generatedBeans.stream().map(b -> b.clazz.getPackage().getName()).collect(Collectors.toSet());
+        beans.addAll(interfaces);
+        return beans;
     }
 }

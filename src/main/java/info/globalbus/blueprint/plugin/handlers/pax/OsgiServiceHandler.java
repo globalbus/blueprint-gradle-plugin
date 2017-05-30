@@ -18,14 +18,14 @@
  */
 package info.globalbus.blueprint.plugin.handlers.pax;
 
+import info.globalbus.blueprint.plugin.model.Blueprint;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.XmlWriter;
 import org.ops4j.pax.cdi.api.OsgiService;
-
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class OsgiServiceHandler implements CustomDependencyAnnotationHandler<OsgiService> {
     @Override
@@ -34,18 +34,23 @@ public class OsgiServiceHandler implements CustomDependencyAnnotationHandler<Osg
     }
 
     @Override
-    public String handleDependencyAnnotation(AnnotatedElement annotatedElement, String name, ContextEnricher contextEnricher) {
+    public String handleDependencyAnnotation(AnnotatedElement annotatedElement, String name, ContextEnricher
+        contextEnricher) {
         final ServiceFilter serviceFilter = extractServiceFilter(annotatedElement);
         final String id = name != null ? name : generateReferenceId(getClass(annotatedElement), serviceFilter);
         final Class<?> clazz = getClass(annotatedElement);
 
         contextEnricher.addBean(id, getClass(annotatedElement));
         contextEnricher.addBlueprintContentWriter(getWriterId(id, clazz), getXmlWriter(id, clazz, serviceFilter));
+
+        Blueprint blueprint = (Blueprint) contextEnricher;
+        blueprint.getInterfaces().add(clazz.getPackage().getName());
         return id;
     }
 
     @Override
-    public String handleDependencyAnnotation(final Class<?> clazz, OsgiService annotation, String name, ContextEnricher contextEnricher) {
+    public String handleDependencyAnnotation(final Class<?> clazz, OsgiService annotation, String name,
+        ContextEnricher contextEnricher) {
         final ServiceFilter serviceFilter = extractServiceFilter(annotation);
         final String id = name != null ? name : generateReferenceId(clazz, serviceFilter);
 
