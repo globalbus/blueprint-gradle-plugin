@@ -10,10 +10,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
@@ -66,17 +69,17 @@ public class BlueprintGenerate extends DefaultTask {
 
         private List<String> getPackagesToScan() {
             List<String> toScan = extension.getScanPaths();
-            if (toScan == null || toScan.isEmpty() || toScan.iterator().next() == null) {
-                log.info("Scan paths not specified - searching for packages");
-                Set<String> packages = PackageFinder.findPackagesInSources(getSourceDir());
-                if (packages.contains(null)) {
-                    throw new GradleException("Found file without package");
-                }
-                toScan = new ArrayList<>(packages);
-                Collections.sort(toScan);
-                extension.setScanPaths(toScan);
+            log.info("Scan paths not specified - searching for packages");
+            Set<String> packages = PackageFinder.findPackagesInSources(getSourceDir());
+            if (packages.contains(null)) {
+                throw new GradleException("Found file without package");
             }
-
+            if (toScan == null || toScan.isEmpty() || toScan.iterator().next() == null) {
+                toScan = new ArrayList<>(packages);
+            }
+            toScan.addAll(packages);
+            Collections.sort(toScan);
+            extension.setScanPaths(toScan);
             for (String aPackage : toScan) {
                 log.info("Package " + aPackage + " will be scanned");
             }
@@ -115,10 +118,23 @@ public class BlueprintGenerate extends DefaultTask {
                 Jar jarTask = (Jar) getProject().getTasks().getByName("jar");
                 Manifest manifest = jarTask.getManifest();
                 if (manifest != null && manifest instanceof OsgiManifest) {
-                    List<String> packages = new ArrayList<>();
+                    OsgiManifest osgiManifest = ((OsgiManifest) manifest);
+                    List<String> actual = osgiManifest.getInstructions().get("Import-Package");
+                    if (actual == null) {
+                        osgiManifest.instruction("Import-Package", "*");
+                        actual = osgiManifest.getInstructions().get("Import-Package");
+                    }
+                    if (actual.contains("*")) {
+                        actual.remove("*");
+                    }
+                    List<String> packages = new LinkedList<>();
                     packages.addAll(blueprint.getGeneratedPackages());
                     packages.add("*");
-                    ((OsgiManifest) manifest).instruction("Import-Package", packages.toArray(new String[0]));
+                    for (String inst : actual) {
+                        String prefix = StringUtils.split(inst, "*")[0];
+                        packages = packages.stream().filter(p -> !p.startsWith(prefix)).collect(Collectors.toList());
+                    }
+                    actual.addAll(packages);
                 }
 
             } else {

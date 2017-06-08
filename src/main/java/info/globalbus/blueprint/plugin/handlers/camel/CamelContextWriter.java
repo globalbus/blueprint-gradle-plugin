@@ -41,13 +41,8 @@ public class CamelContextWriter implements XmlWriter {
     private void writePropertyPlaceholder(XMLStreamWriter writer) throws XMLStreamException {
         writer.writeEmptyElement("propertyPlaceholder");
         writer.writeAttribute("id", "properties");
-        List<?> propertiesList = (List<?>) camelOpts.get("properties");
         List<String> locations = new ArrayList<>();
         locations.add("blueprint:blueprint-properties");
-        for (int i = 1; i < propertiesList.size(); i++) {
-            Map<?, ?> map = (Map<?, ?>) propertiesList.get(i);
-            locations.add("ref:" + map.get("id").toString());
-        }
         writer.writeAttribute("location", locations.stream().collect(Collectors.joining(",")));
     }
 
