@@ -19,20 +19,21 @@
 package info.globalbus.blueprint.plugin.model;
 
 import info.globalbus.blueprint.plugin.handlers.Handlers;
-import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
-import org.apache.aries.blueprint.plugin.spi.NamedLikeHandler;
-import org.apache.aries.blueprint.plugin.spi.XmlWriter;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import lombok.EqualsAndHashCode;
+import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
+import org.apache.aries.blueprint.plugin.spi.NamedLikeHandler;
+import org.apache.aries.blueprint.plugin.spi.XmlWriter;
 
 import static info.globalbus.blueprint.plugin.model.AnnotationHelper.findName;
 import static info.globalbus.blueprint.plugin.model.NamingHelper.getBeanName;
 
+@EqualsAndHashCode(of = "name")
 class Property implements Comparable<Property>, XmlWriter {
     public final String name;
     public final String ref;
@@ -69,11 +70,15 @@ class Property implements Comparable<Property>, XmlWriter {
         }
     }
 
-    private static String getRefFromCustomDependencyHandlers(BlueprintRegistry blueprintRegistry, AnnotatedElement annotatedElement, String ref) {
-        for (CustomDependencyAnnotationHandler customDependencyAnnotationHandler : Handlers.CUSTOM_DEPENDENCY_ANNOTATION_HANDLERS) {
-            Annotation annotation = (Annotation) AnnotationHelper.findAnnotation(annotatedElement.getAnnotations(), customDependencyAnnotationHandler.getAnnotation());
+    private static String getRefFromCustomDependencyHandlers(BlueprintRegistry blueprintRegistry, AnnotatedElement
+        annotatedElement, String ref) {
+        for (CustomDependencyAnnotationHandler customDependencyAnnotationHandler : Handlers
+            .CUSTOM_DEPENDENCY_ANNOTATION_HANDLERS) {
+            Annotation annotation = (Annotation) AnnotationHelper.findAnnotation(annotatedElement.getAnnotations(),
+                customDependencyAnnotationHandler.getAnnotation());
             if (annotation != null) {
-                String generatedRef = customDependencyAnnotationHandler.handleDependencyAnnotation(annotatedElement, ref, blueprintRegistry);
+                String generatedRef = customDependencyAnnotationHandler.handleDependencyAnnotation(annotatedElement,
+                    ref, blueprintRegistry);
                 if (generatedRef != null) {
                     return generatedRef;
                 }
@@ -107,10 +112,13 @@ class Property implements Comparable<Property>, XmlWriter {
                 return new Property(propertyName, ref, null, false);
             }
 
-            for (CustomDependencyAnnotationHandler customDependencyAnnotationHandler : Handlers.CUSTOM_DEPENDENCY_ANNOTATION_HANDLERS) {
-                Annotation annotation = (Annotation) AnnotationHelper.findAnnotation(method.getParameterAnnotations()[0], customDependencyAnnotationHandler.getAnnotation());
+            for (CustomDependencyAnnotationHandler customDependencyAnnotationHandler : Handlers
+                .CUSTOM_DEPENDENCY_ANNOTATION_HANDLERS) {
+                Annotation annotation = (Annotation) AnnotationHelper.findAnnotation(method.getParameterAnnotations()
+                    [0], customDependencyAnnotationHandler.getAnnotation());
                 if (annotation != null) {
-                    String generatedRef = customDependencyAnnotationHandler.handleDependencyAnnotation(method.getParameterTypes()[0], annotation, ref, blueprintRegistry);
+                    String generatedRef = customDependencyAnnotationHandler.handleDependencyAnnotation(method
+                        .getParameterTypes()[0], annotation, ref, blueprintRegistry);
                     if (generatedRef != null) {
                         ref = generatedRef;
                         break;
@@ -157,7 +165,7 @@ class Property implements Comparable<Property>, XmlWriter {
     }
 
     private static String getForcedRefName(Class<?> clazz, AnnotatedElement annotatedElement) {
-        for (NamedLikeHandler namedLikeHandler : Handlers.NAMED_LIKE_HANDLERS) {
+        for (NamedLikeHandler<? extends Annotation> namedLikeHandler : Handlers.NAMED_LIKE_HANDLERS) {
             if (annotatedElement.getAnnotation(namedLikeHandler.getAnnotation()) != null) {
                 String name = namedLikeHandler.getName(clazz, annotatedElement);
                 if (name != null) {
@@ -169,7 +177,8 @@ class Property implements Comparable<Property>, XmlWriter {
     }
 
     private static boolean needsInject(AnnotatedElement annotatedElement) {
-        for (Class injectDependencyAnnotation : AnnotationHelper.injectDependencyAnnotations) {
+        for (Class<? extends Annotation> injectDependencyAnnotation :
+            AnnotationHelper.injectDependencyAnnotations) {
             if (annotatedElement.getAnnotation(injectDependencyAnnotation) != null) {
                 return true;
             }

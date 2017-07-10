@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 class ServiceProperty {
+    private static final String VALUE = "value";
     final String name;
     private final String type;
     private final boolean isArray;
@@ -71,7 +72,7 @@ class ServiceProperty {
         if (type == null && !isArray) {
             writer.writeEmptyElement("entry");
             writer.writeAttribute("key", name);
-            writer.writeAttribute("value", values.get(0));
+            writer.writeAttribute(VALUE, values.get(0));
         } else {
             writer.writeStartElement("entry");
             writer.writeAttribute("key", name);
@@ -81,13 +82,13 @@ class ServiceProperty {
                     writer.writeAttribute("value-type", type);
                 }
                 for (String value : values) {
-                    writer.writeStartElement("value");
+                    writer.writeStartElement(VALUE);
                     writer.writeCharacters(value);
                     writer.writeEndElement();
                 }
                 writer.writeEndElement();
             } else {
-                writer.writeStartElement("value");
+                writer.writeStartElement(VALUE);
                 writer.writeAttribute("type", type);
                 writer.writeCharacters(values.get(0));
                 writer.writeEndElement();

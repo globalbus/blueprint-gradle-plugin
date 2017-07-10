@@ -68,7 +68,7 @@ public class OsgiServiceProviderHandler implements BeanAnnotationHandler<OsgiSer
         }
         writer.writeAttribute("ref", id);
 
-        if (interfaceNames.size() == 0) {
+        if (interfaceNames.isEmpty()) {
             writer.writeAttribute("auto-export", "interfaces");
         } else if (interfaceNames.size() == 1) {
             writer.writeAttribute("interface", Iterables.getOnlyElement(interfaceNames));

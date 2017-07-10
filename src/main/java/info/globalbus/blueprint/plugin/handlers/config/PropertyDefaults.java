@@ -49,7 +49,7 @@ public class PropertyDefaults implements ContextInitializationHandler {
 
         @Override
         public String updatePolicy() {
-            return "reload";
+            return null;
         }
 
         @Override

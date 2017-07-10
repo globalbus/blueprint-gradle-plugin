@@ -15,5 +15,5 @@
 # limitations under the License.
 #
 
-info.globalbus.blueprint.plugin.handlers.spring.ValueInjectionHandler
+info.globalbus.blueprint.plugin.handlers.spring.ValueInjectionHandlerImpl
 info.globalbus.blueprint.plugin.handlers.config.ConfigPropertyInjectionHandler

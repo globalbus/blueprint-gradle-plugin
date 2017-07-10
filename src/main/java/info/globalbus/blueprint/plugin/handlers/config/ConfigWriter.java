@@ -18,13 +18,13 @@
  */
 package info.globalbus.blueprint.plugin.handlers.config;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import lombok.RequiredArgsConstructor;
 import org.apache.aries.blueprint.annotation.config.Config;
 import org.apache.aries.blueprint.annotation.config.DefaultProperty;
 import org.apache.aries.blueprint.plugin.spi.XmlWriter;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import org.apache.commons.lang3.StringUtils;
 
 @RequiredArgsConstructor
 class ConfigWriter implements XmlWriter {
@@ -44,7 +44,9 @@ class ConfigWriter implements XmlWriter {
         if (!"}".equals(config.placeholderSuffix())) {
             writer.writeAttribute("placeholder-suffix", config.placeholderSuffix());
         }
-        writer.writeAttribute("update-strategy", config.updatePolicy());
+        if (StringUtils.isNotBlank(config.updatePolicy())) {
+            writer.writeAttribute("update-strategy", config.updatePolicy());
+        }
 
         DefaultProperty[] defaults = config.defaults();
         if (defaults.length > 0) {

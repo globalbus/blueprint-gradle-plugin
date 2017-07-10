@@ -20,7 +20,9 @@ package info.globalbus.blueprint.plugin.model;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(of = "id")
 class BeanRef implements Comparable<BeanRef> {
     final String id;
     private final Class<?> clazz;

@@ -19,16 +19,6 @@
 package info.globalbus.blueprint.plugin.model;
 
 import info.globalbus.blueprint.plugin.handlers.Handlers;
-import org.apache.aries.blueprint.plugin.spi.BeanAnnotationHandler;
-import org.apache.aries.blueprint.plugin.spi.BeanEnricher;
-import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
-import org.apache.aries.blueprint.plugin.spi.FieldAnnotationHandler;
-import org.apache.aries.blueprint.plugin.spi.InjectLikeHandler;
-import org.apache.aries.blueprint.plugin.spi.MethodAnnotationHandler;
-import org.apache.aries.blueprint.plugin.spi.XmlWriter;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
@@ -41,11 +31,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import lombok.EqualsAndHashCode;
+import org.apache.aries.blueprint.plugin.spi.BeanAnnotationHandler;
+import org.apache.aries.blueprint.plugin.spi.BeanEnricher;
+import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
+import org.apache.aries.blueprint.plugin.spi.FieldAnnotationHandler;
+import org.apache.aries.blueprint.plugin.spi.InjectLikeHandler;
+import org.apache.aries.blueprint.plugin.spi.MethodAnnotationHandler;
+import org.apache.aries.blueprint.plugin.spi.XmlWriter;
 
 import static info.globalbus.blueprint.plugin.model.AnnotationHelper.findSingleton;
 import static info.globalbus.blueprint.plugin.model.NamingHelper.getBeanName;
 
-class Bean implements BeanEnricher, XmlWriter, Comparable<Bean>{
+@EqualsAndHashCode(of = "id")
+class Bean implements BeanEnricher, XmlWriter, Comparable<Bean> {
 
     private static final String NS_EXT = "http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0";
 
@@ -81,18 +82,19 @@ class Bean implements BeanEnricher, XmlWriter, Comparable<Bean>{
     }
 
     private void handleMethodsAnnotation(Introspector introspector) {
-        for (MethodAnnotationHandler methodAnnotationHandler : Handlers.METHOD_ANNOTATION_HANDLERS) {
+        for (MethodAnnotationHandler<? extends Annotation> methodAnnotationHandler : Handlers
+            .METHOD_ANNOTATION_HANDLERS) {
             List<Method> methods = introspector.methodsWith(methodAnnotationHandler.getAnnotation());
-            if (methods.size() > 0) {
+            if (!methods.isEmpty()) {
                 methodAnnotationHandler.handleMethodAnnotation(clazz, methods, contextEnricher, this);
             }
         }
     }
 
     private void handleFieldsAnnotation(Introspector introspector) {
-        for (FieldAnnotationHandler fieldAnnotationHandler : Handlers.FIELD_ANNOTATION_HANDLERS) {
+        for (FieldAnnotationHandler<? extends Annotation> fieldAnnotationHandler : Handlers.FIELD_ANNOTATION_HANDLERS) {
             List<Field> fields = introspector.fieldsWith(fieldAnnotationHandler.getAnnotation());
-            if (fields.size() > 0) {
+            if (!fields.isEmpty()) {
                 fieldAnnotationHandler.handleFieldAnnotation(clazz, fields, contextEnricher, this);
             }
         }
@@ -100,7 +102,8 @@ class Bean implements BeanEnricher, XmlWriter, Comparable<Bean>{
 
     private void handleCustomBeanAnnotations() {
         for (BeanAnnotationHandler beanAnnotationHandler : Handlers.BEAN_ANNOTATION_HANDLERS) {
-            Object annotation = AnnotationHelper.findAnnotation(clazz.getAnnotations(), beanAnnotationHandler.getAnnotation());
+            Object annotation = AnnotationHelper.findAnnotation(clazz.getAnnotations(), beanAnnotationHandler
+                .getAnnotation());
             if (annotation != null) {
                 beanAnnotationHandler.handleBeanAnnotation(clazz, id, contextEnricher, this);
             }
@@ -136,7 +139,7 @@ class Bean implements BeanEnricher, XmlWriter, Comparable<Bean>{
     }
 
     private boolean shouldInject(AnnotatedElement annotatedElement) {
-        for (InjectLikeHandler injectLikeHandler : Handlers.BEAN_INJECT_LIKE_HANDLERS) {
+        for (InjectLikeHandler<? extends Annotation> injectLikeHandler : Handlers.BEAN_INJECT_LIKE_HANDLERS) {
             if (annotatedElement.getAnnotation(injectLikeHandler.getAnnotation()) != null) {
                 return true;
             }
@@ -144,7 +147,8 @@ class Bean implements BeanEnricher, XmlWriter, Comparable<Bean>{
         return false;
     }
 
-    void resolveArguments(BlueprintRegistry blueprintRegistry, Class[] parameterTypes, Annotation[][] parameterAnnotations) {
+    void resolveArguments(BlueprintRegistry blueprintRegistry, Class[] parameterTypes, Annotation[][]
+        parameterAnnotations) {
         for (int i = 0; i < parameterTypes.length; ++i) {
             constructorArguments.add(new Argument(blueprintRegistry, parameterTypes[i], parameterAnnotations[i]));
         }

@@ -13,7 +13,7 @@ public class BlueprintPlugin implements Plugin<Project> {
         target.getExtensions().add("settings", PluginSettings.class);
         BlueprintGenerate task = target.getTasks().create("blueprintGenerate", BlueprintGenerate.class);
         SourceSet main = ((SourceSetContainer) target.getProperties().get("sourceSets")).getByName("main");
-        main.getResources().srcDir(task.generatedDir);
+        main.getResources().srcDir(task.getGeneratedDir());
         task.mustRunAfter("compileJava");
         target.getTasks().getByName("processResources").dependsOn(task);
         target.getTasks().getByName("jar").dependsOn(task);

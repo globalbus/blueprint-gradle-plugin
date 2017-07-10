@@ -23,7 +23,9 @@ import info.globalbus.blueprint.plugin.handlers.Handlers;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 class QualifierHelper {
     static Set<Annotation> getQualifiers(Annotation[] annotations) {
         final Set<Annotation> qualifiers = new HashSet<>();

@@ -21,20 +21,23 @@ package info.globalbus.blueprint.plugin.gradle;
 import info.globalbus.blueprint.plugin.handlers.Handlers;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import io.github.lukehutch.fastclasspathscanner.classloaderhandler.URLClassLoaderHandler;
-
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 class FilteredClassFinder {
 
     @SuppressWarnings("unchecked")
     static Set<Class<?>> findClasses(ClassLoader finder, Collection<String> packageNames) {
-        return findClasses(finder, packageNames, Handlers.BEAN_MARKING_ANNOTATION_CLASSES.toArray(new Class[Handlers.BEAN_MARKING_ANNOTATION_CLASSES.size()]));
+        return findClasses(finder, packageNames, Handlers.BEAN_MARKING_ANNOTATION_CLASSES.toArray(new Class[Handlers
+            .BEAN_MARKING_ANNOTATION_CLASSES.size()]));
     }
 
-    private static Set<Class<?>> findClasses(ClassLoader finder, Collection<String> packageNames, Class<? extends Annotation>[] annotations) {
+    private static Set<Class<?>> findClasses(ClassLoader finder, Collection<String> packageNames, Class<? extends
+        Annotation>[] annotations) {
         FastClasspathScanner fastClasspathScanner = new FastClasspathScanner(packageNames.toArray(new String[0]));
         fastClasspathScanner.registerClassLoaderHandler(URLClassLoaderHandler.class);
         fastClasspathScanner.addClassLoader(finder);

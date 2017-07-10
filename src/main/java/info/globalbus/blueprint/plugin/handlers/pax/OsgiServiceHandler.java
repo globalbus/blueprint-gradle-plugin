@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.XmlWriter;
+import org.gradle.api.GradleException;
 import org.ops4j.pax.cdi.api.OsgiService;
 
 public class OsgiServiceHandler implements CustomDependencyAnnotationHandler<OsgiService> {
@@ -87,7 +88,7 @@ public class OsgiServiceHandler implements CustomDependencyAnnotationHandler<Osg
         if (annotatedElement instanceof Field) {
             return ((Field) annotatedElement).getType();
         }
-        throw new RuntimeException("Unknown annotated element");
+        throw new GradleException("Unknown annotated element");
     }
 
     private ServiceFilter extractServiceFilter(AnnotatedElement annotatedElement) {

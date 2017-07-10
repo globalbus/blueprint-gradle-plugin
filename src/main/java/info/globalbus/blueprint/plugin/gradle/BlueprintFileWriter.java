@@ -19,7 +19,9 @@
 package info.globalbus.blueprint.plugin.gradle;
 
 import info.globalbus.blueprint.plugin.model.Blueprint;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -29,9 +31,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
+import org.gradle.api.GradleException;
 
 class BlueprintFileWriter {
 
@@ -57,7 +57,7 @@ class BlueprintFileWriter {
             writer.writeEndDocument();
             writer.close();
         } catch (XMLStreamException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new GradleException(e.getMessage(), e);
         }
     }
 
@@ -68,10 +68,10 @@ class BlueprintFileWriter {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.transform(
-                    new StreamSource(new ByteArrayInputStream(temp.toByteArray())),
-                    new StreamResult(os));
+                new StreamSource(new ByteArrayInputStream(temp.toByteArray())),
+                new StreamResult(os));
         } catch (TransformerException e) {
-            throw new RuntimeException("Cannot print file", e);
+            throw new GradleException("Cannot print file", e);
         }
     }
 }

@@ -19,12 +19,11 @@
 package info.globalbus.blueprint.plugin.model;
 
 import info.globalbus.blueprint.plugin.handlers.Handlers;
-import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
-import org.apache.aries.blueprint.plugin.spi.XmlWriter;
-
+import java.lang.annotation.Annotation;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.lang.annotation.Annotation;
+import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
+import org.apache.aries.blueprint.plugin.spi.XmlWriter;
 
 import static info.globalbus.blueprint.plugin.model.AnnotationHelper.findName;
 import static info.globalbus.blueprint.plugin.model.AnnotationHelper.findValue;
@@ -44,29 +43,32 @@ class Argument implements XmlWriter {
     }
 
     private String findRef(BlueprintRegistry blueprintRegistry, Class<?> argumentClass, Annotation[] annotations) {
-        String ref = findName(annotations);
+        String name = findName(annotations);
 
-        for (CustomDependencyAnnotationHandler customDependencyAnnotationHandler : Handlers.CUSTOM_DEPENDENCY_ANNOTATION_HANDLERS) {
-            Annotation annotation = (Annotation) AnnotationHelper.findAnnotation(annotations, customDependencyAnnotationHandler.getAnnotation());
+        for (CustomDependencyAnnotationHandler customDependencyAnnotationHandler : Handlers
+            .CUSTOM_DEPENDENCY_ANNOTATION_HANDLERS) {
+            Annotation annotation = (Annotation) AnnotationHelper.findAnnotation(annotations,
+                customDependencyAnnotationHandler.getAnnotation());
             if (annotation != null) {
-                String generatedRef = customDependencyAnnotationHandler.handleDependencyAnnotation(argumentClass, annotation, ref, blueprintRegistry);
+                String generatedRef = customDependencyAnnotationHandler.handleDependencyAnnotation(argumentClass,
+                    annotation, name, blueprintRegistry);
                 if (generatedRef != null) {
-                    ref = generatedRef;
+                    name = generatedRef;
                     break;
                 }
             }
         }
 
-        if (ref == null) {
+        if (name == null) {
             BeanTemplate template = new BeanTemplate(argumentClass, annotations);
             BeanRef bean = blueprintRegistry.getMatching(template);
             if (bean != null) {
-                ref = bean.id;
+                name = bean.id;
             } else {
-                ref = getBeanName(argumentClass);
+                name = getBeanName(argumentClass);
             }
         }
-        return ref;
+        return name;
     }
 
     String getRef() {

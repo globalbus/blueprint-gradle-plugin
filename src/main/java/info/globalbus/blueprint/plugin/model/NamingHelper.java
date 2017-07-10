@@ -19,7 +19,9 @@
 package info.globalbus.blueprint.plugin.model;
 
 import java.lang.reflect.AnnotatedElement;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 class NamingHelper {
     static String getBeanName(Class<?> clazz) {
         return getBeanName(clazz, clazz);

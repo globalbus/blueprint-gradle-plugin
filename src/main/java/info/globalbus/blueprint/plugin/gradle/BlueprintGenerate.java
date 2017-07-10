@@ -4,6 +4,7 @@ import info.globalbus.blueprint.plugin.BlueprintConfigurationImpl;
 import info.globalbus.blueprint.plugin.model.Blueprint;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.xml.stream.XMLStreamException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +25,7 @@ import org.gradle.api.Project;
 import org.gradle.api.java.archives.Manifest;
 import org.gradle.api.plugins.osgi.OsgiManifest;
 import org.gradle.api.tasks.CacheableTask;
-import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -34,18 +36,11 @@ import org.gradle.api.tasks.bundling.Jar;
 @CacheableTask
 public class BlueprintGenerate extends DefaultTask {
 
-    File sourcesDir = new File(getProject().getBuildDir(), "classes");
-
-    File generatedDir = new File(getProject().getBuildDir(), "generatedsources");
+    public static final String IMPORT_PACKAGE = "Import-Package";
 
     @OutputDirectory
     public File getGeneratedDir() {
-        return generatedDir;
-    }
-
-    @InputDirectory
-    public File getSourcesDir() {
-        return sourcesDir;
+        return new File(getProject().getBuildDir(), "generatedsources");
     }
 
     @TaskAction
@@ -62,6 +57,13 @@ public class BlueprintGenerate extends DefaultTask {
             throw ex;
         }
     }
+
+    @InputFiles
+    public Set<File> getSourceDir() {
+        SourceSet main = ((SourceSetContainer) getProject().getProperties().get("sourceSets")).getByName("main");
+        return main.getAllJava().getSrcDirs();
+    }
+
 
     @RequiredArgsConstructor
     private class BlueprintGenerateImpl {
@@ -86,12 +88,6 @@ public class BlueprintGenerate extends DefaultTask {
             return toScan;
         }
 
-        public Set<File> getSourceDir() {
-            SourceSet main = ((SourceSetContainer) getProject().getProperties().get("sourceSets")).getByName("main");
-            return main.getAllJava().getSrcDirs();
-        }
-
-
         private File getClassesDir(Project project) {
             SourceSet main = ((SourceSetContainer) project.getProperties().get("sourceSets")).getByName("main");
             return main.getOutput().getClassesDir();
@@ -112,17 +108,17 @@ public class BlueprintGenerate extends DefaultTask {
             }
         }
 
-        private void writeBlueprintIfNeeded(Blueprint blueprint) throws Exception {
+        private void writeBlueprintIfNeeded(Blueprint blueprint) throws IOException, XMLStreamException {
             if (blueprint.shouldBeGenerated()) {
                 writeBlueprint(blueprint);
                 Jar jarTask = (Jar) getProject().getTasks().getByName("jar");
                 Manifest manifest = jarTask.getManifest();
                 if (manifest != null && manifest instanceof OsgiManifest) {
                     OsgiManifest osgiManifest = ((OsgiManifest) manifest);
-                    List<String> actual = osgiManifest.getInstructions().get("Import-Package");
+                    List<String> actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
                     if (actual == null) {
-                        osgiManifest.instruction("Import-Package", "*");
-                        actual = osgiManifest.getInstructions().get("Import-Package");
+                        osgiManifest.instruction(IMPORT_PACKAGE, "*");
+                        actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
                     }
                     if (actual.contains("*")) {
                         actual.remove("*");
@@ -142,8 +138,8 @@ public class BlueprintGenerate extends DefaultTask {
             }
         }
 
-        private void writeBlueprint(Blueprint blueprint) throws Exception {
-            File dir = new File(generatedDir, extension.getGeneratedDir());
+        private void writeBlueprint(Blueprint blueprint) throws IOException, XMLStreamException {
+            File dir = new File(getGeneratedDir(), extension.getGeneratedDir());
             File file = new File(dir, extension.getGeneratedFileName());
             dir.mkdirs();
             log.info("Generating blueprint to " + file);

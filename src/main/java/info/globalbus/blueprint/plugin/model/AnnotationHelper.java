@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,14 +19,15 @@
 package info.globalbus.blueprint.plugin.model;
 
 import info.globalbus.blueprint.plugin.handlers.Handlers;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.experimental.UtilityClass;
 import org.apache.aries.blueprint.plugin.spi.InjectLikeHandler;
 import org.apache.aries.blueprint.plugin.spi.NamedLikeHandler;
 import org.apache.aries.blueprint.plugin.spi.ValueInjectionHandler;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
-
+@UtilityClass
 class AnnotationHelper {
     static final Class<? extends Annotation>[] injectDependencyAnnotations = findInjectDependencyAnnotations();
 
@@ -42,7 +43,7 @@ class AnnotationHelper {
     }
 
     static String findValue(Annotation[] annotations) {
-        for (ValueInjectionHandler valueInjectionHandler : Handlers.VALUE_INJECTION_HANDLERS) {
+        for (ValueInjectionHandler<? extends Annotation> valueInjectionHandler : Handlers.VALUE_INJECTION_HANDLERS) {
             Object annotation = findAnnotation(annotations, valueInjectionHandler.getAnnotation());
             if (annotation != null) {
                 String value = valueInjectionHandler.getValue(annotation);
@@ -55,7 +56,7 @@ class AnnotationHelper {
     }
 
     static String findName(Annotation[] annotations) {
-        for (NamedLikeHandler namedLikeHandler : Handlers.NAMED_LIKE_HANDLERS) {
+        for (NamedLikeHandler<? extends Annotation> namedLikeHandler : Handlers.NAMED_LIKE_HANDLERS) {
             Object annotation = findAnnotation(annotations, namedLikeHandler.getAnnotation());
             if (annotation != null) {
                 String value = namedLikeHandler.getName(annotation);

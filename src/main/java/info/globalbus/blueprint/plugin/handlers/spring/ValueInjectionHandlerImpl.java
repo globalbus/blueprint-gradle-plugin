@@ -18,9 +18,10 @@
  */
 package info.globalbus.blueprint.plugin.handlers.spring;
 
+import org.apache.aries.blueprint.plugin.spi.ValueInjectionHandler;
 import org.springframework.beans.factory.annotation.Value;
 
-public class ValueInjectionHandler implements org.apache.aries.blueprint.plugin.spi.ValueInjectionHandler<Value> {
+public class ValueInjectionHandlerImpl implements ValueInjectionHandler<Value> {
 
     @Override
     public Class<Value> getAnnotation() {

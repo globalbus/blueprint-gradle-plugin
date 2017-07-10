@@ -18,14 +18,16 @@
  */
 package info.globalbus.blueprint.plugin.gradle;
 
+import java.io.File;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 import lombok.Value;
 import lombok.experimental.UtilityClass;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
 
 @UtilityClass
 class PackageFinder {
@@ -41,7 +43,7 @@ class PackageFinder {
 
     private Set<String> findPackageRoots(File file) {
         Set<String> packages = new HashSet<>();
-        Stack<SearchFile> stack = new Stack<>();
+        Deque<SearchFile> stack = new ArrayDeque<>();
         stack.add(new SearchFile(null, file));
         while (!stack.isEmpty()) {
             SearchFile cur = stack.pop();
@@ -57,11 +59,9 @@ class PackageFinder {
             if (foundFile) {
                 continue;
             }
-            for (File child : files) {
-                if (child.isDirectory()) {
-                    stack.add(new SearchFile(cur.prefix != null ? cur.prefix + "." + child.getName() : child.getName(), child));
-                }
-            }
+            Stream.of(files).filter(File::isDirectory).forEach(child ->
+                stack.add(new SearchFile(Optional.ofNullable(cur.prefix).map(v -> v + "." + child.getName())
+                    .orElse(child.getName()), child)));
         }
         return packages;
     }

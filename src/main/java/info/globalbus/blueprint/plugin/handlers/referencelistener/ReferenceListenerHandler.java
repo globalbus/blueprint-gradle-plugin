@@ -18,6 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.handlers.referencelistener;
 
+import java.lang.annotation.Annotation;
 import org.apache.aries.blueprint.annotation.referencelistener.Bind;
 import org.apache.aries.blueprint.annotation.referencelistener.Cardinality;
 import org.apache.aries.blueprint.annotation.referencelistener.ReferenceListener;
@@ -31,6 +32,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.List;
+import org.gradle.api.GradleException;
 
 public class ReferenceListenerHandler implements BeanAnnotationHandler<ReferenceListener> {
     @Override
@@ -144,7 +146,7 @@ public class ReferenceListenerHandler implements BeanAnnotationHandler<Reference
         return builder.toString();
     }
 
-    private String getAnnotatedMethodName(Class<?> referenceListenerClass, Class annotation) {
+    private String getAnnotatedMethodName(Class<?> referenceListenerClass, Class<? extends Annotation> annotation) {
         for (Method method : referenceListenerClass.getMethods()) {
             if (method.getAnnotation(annotation) != null) {
                 return method.getName();
@@ -165,6 +167,6 @@ public class ReferenceListenerHandler implements BeanAnnotationHandler<Reference
         if (annotatedElement instanceof Method) {
             return ((Method) annotatedElement).getReturnType();
         }
-        throw new RuntimeException("Unknown annotated element");
+        throw new GradleException("Unknown annotated element");
     }
 }
