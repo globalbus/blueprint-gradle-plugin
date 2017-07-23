@@ -20,7 +20,6 @@ package info.globalbus.blueprint.plugin.handlers.javax;
 
 import com.google.common.base.CaseFormat;
 import info.globalbus.blueprint.plugin.handlers.TransactionBase;
-
 import javax.transaction.Transactional;
 
 public class JavaxTransactionFactory extends TransactionBase<Transactional> {

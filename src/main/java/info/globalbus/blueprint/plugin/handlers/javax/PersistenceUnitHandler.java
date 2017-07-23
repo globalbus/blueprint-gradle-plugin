@@ -18,13 +18,12 @@
  */
 package info.globalbus.blueprint.plugin.handlers.javax;
 
+import java.lang.reflect.Field;
+import java.util.List;
+import javax.persistence.PersistenceUnit;
 import org.apache.aries.blueprint.plugin.spi.BeanEnricher;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.FieldAnnotationHandler;
-
-import javax.persistence.PersistenceUnit;
-import java.lang.reflect.Field;
-import java.util.List;
 
 import static info.globalbus.blueprint.plugin.handlers.javax.Namespaces.PATTERN_NS_JPA1;
 import static info.globalbus.blueprint.plugin.handlers.javax.Namespaces.PATTERN_NS_JPA2;

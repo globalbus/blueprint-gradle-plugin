@@ -18,10 +18,9 @@
  */
 package info.globalbus.blueprint.plugin;
 
-import org.apache.aries.blueprint.plugin.spi.Activation;
-
 import java.util.Map;
 import java.util.Set;
+import org.apache.aries.blueprint.plugin.spi.Activation;
 
 /**
  * Blueprint plugin configuration from pom.xml

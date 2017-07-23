@@ -18,21 +18,20 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
-import org.springframework.context.annotation.Lazy;
-
 import javax.inject.Inject;
+import org.springframework.context.annotation.Lazy;
 
 @Lazy
 public class MyProduced {
     private String message;
-    
+
     @Inject
     ServiceA serviceA;
 
     public MyProduced(String message) {
         this.message = message;
     }
-    
+
     public String getMessage() {
         return message;
     }

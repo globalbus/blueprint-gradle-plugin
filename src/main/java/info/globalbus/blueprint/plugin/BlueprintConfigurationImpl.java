@@ -19,14 +19,13 @@
 package info.globalbus.blueprint.plugin;
 
 import info.globalbus.blueprint.plugin.gradle.PluginSettings;
+import java.util.Map;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.aries.blueprint.plugin.spi.Activation;
 import org.apache.aries.blueprint.plugin.spi.BlueprintConfiguration;
-
-import java.util.Map;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @AllArgsConstructor

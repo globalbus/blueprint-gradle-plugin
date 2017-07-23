@@ -34,12 +34,11 @@ import info.globalbus.blueprint.plugin.test.MyBean3;
 import info.globalbus.blueprint.plugin.test.MyBean4;
 import info.globalbus.blueprint.plugin.test.MyBean5;
 import info.globalbus.blueprint.plugin.test.ServiceAImpl1;
-import org.junit.Test;
-
-import javax.inject.Named;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javax.inject.Named;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -74,12 +73,12 @@ public class BeanTest {
         assertEquals("serviceA", prop.ref);
 
         Set<TransactionalDef> expectedTxs = Sets.newHashSet(new TransactionalDef("*", "RequiresNew"),
-                new TransactionalDef("txNotSupported", "NotSupported"),
-                new TransactionalDef("txMandatory", "Mandatory"),
-                new TransactionalDef("txNever", "Never"),
-                new TransactionalDef("txRequired", "Required"),
-                new TransactionalDef("txOverridenWithRequiresNew", "RequiresNew"),
-                new TransactionalDef("txSupports", "Supports"));
+            new TransactionalDef("txNotSupported", "NotSupported"),
+            new TransactionalDef("txMandatory", "Mandatory"),
+            new TransactionalDef("txNever", "Never"),
+            new TransactionalDef("txRequired", "Required"),
+            new TransactionalDef("txOverridenWithRequiresNew", "RequiresNew"),
+            new TransactionalDef("txSupports", "Supports"));
         assertEquals(expectedTxs, getTransactionalDefs(bean));
     }
 
@@ -94,12 +93,12 @@ public class BeanTest {
         assertEquals("prototype", bean.attributes.get("scope"));
 
         Set<TransactionalDef> expectedTxs = Sets.newHashSet(new TransactionalDef("*", "RequiresNew"),
-                new TransactionalDef("txNotSupported", "NotSupported"),
-                new TransactionalDef("txMandatory", "Mandatory"),
-                new TransactionalDef("txNever", "Never"),
-                new TransactionalDef("txRequired", "Required"),
-                new TransactionalDef("txRequiresNew", "RequiresNew"),
-                new TransactionalDef("txSupports", "Supports"));
+            new TransactionalDef("txNotSupported", "NotSupported"),
+            new TransactionalDef("txMandatory", "Mandatory"),
+            new TransactionalDef("txNever", "Never"),
+            new TransactionalDef("txRequired", "Required"),
+            new TransactionalDef("txRequiresNew", "RequiresNew"),
+            new TransactionalDef("txSupports", "Supports"));
         assertEquals(expectedTxs, getTransactionalDefs(bean));
     }
 

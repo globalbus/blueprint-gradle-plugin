@@ -18,9 +18,8 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
-import org.ops4j.pax.cdi.api.OsgiService;
-
 import javax.inject.Singleton;
+import org.ops4j.pax.cdi.api.OsgiService;
 
 @Singleton
 public class MyBean7 {

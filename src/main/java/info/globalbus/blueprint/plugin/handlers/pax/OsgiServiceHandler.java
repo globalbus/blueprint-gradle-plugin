@@ -51,7 +51,7 @@ public class OsgiServiceHandler implements CustomDependencyAnnotationHandler<Osg
 
     @Override
     public String handleDependencyAnnotation(final Class<?> clazz, OsgiService annotation, String name,
-        ContextEnricher contextEnricher) {
+                                             ContextEnricher contextEnricher) {
         final ServiceFilter serviceFilter = extractServiceFilter(annotation);
         final String id = name != null ? name : generateReferenceId(clazz, serviceFilter);
 

@@ -18,14 +18,12 @@
  */
 package info.globalbus.blueprint.plugin.bad;
 
+import info.globalbus.blueprint.plugin.test.MyBean1;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import info.globalbus.blueprint.plugin.test.MyBean1;
-
 @Singleton
-public class BadFieldBean2 extends ParentWithInjectedField
-{
+public class BadFieldBean2 extends ParentWithInjectedField {
     @SuppressWarnings("unused")
     @Inject
     private MyBean1 field;

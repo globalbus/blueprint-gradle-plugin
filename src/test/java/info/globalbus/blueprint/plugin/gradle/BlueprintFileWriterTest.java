@@ -22,19 +22,24 @@ import com.google.common.collect.Sets;
 import info.globalbus.blueprint.plugin.BlueprintConfigurationImpl;
 import info.globalbus.blueprint.plugin.model.Blueprint;
 import info.globalbus.blueprint.plugin.model.TransactionalDef;
-import info.globalbus.blueprint.plugin.test.*;
+import info.globalbus.blueprint.plugin.test.MyBean1;
+import info.globalbus.blueprint.plugin.test.MyProduced;
+import info.globalbus.blueprint.plugin.test.ServiceA;
+import info.globalbus.blueprint.plugin.test.ServiceB;
+import info.globalbus.blueprint.plugin.test.ServiceD;
 import info.globalbus.blueprint.plugin.test.bean.BasicBean;
 import info.globalbus.blueprint.plugin.test.bean.BeanWithCallbackMethods;
 import info.globalbus.blueprint.plugin.test.bean.NamedBean;
 import info.globalbus.blueprint.plugin.test.bean.SimpleProducedBean;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,10 +54,13 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -70,9 +78,9 @@ public class BlueprintFileWriterTest {
     public static void setUp() throws Exception {
         long start = System.currentTimeMillis();
         Set<Class<?>> beanClasses = FilteredClassFinder.findClasses(BlueprintFileWriterTest.class.getClassLoader(),
-                Collections.singletonList(
-                        MyBean1.class.getPackage().getName()
-                ));
+            Collections.singletonList(
+                MyBean1.class.getPackage().getName()
+            ));
         Set<String> namespaces = new HashSet<>(Arrays.asList(NS_JPA, NS_TX1));
         Map<String, String> customParameters = new HashMap<>();
         customParameters.put("ex.t", "1");
@@ -95,7 +103,7 @@ public class BlueprintFileWriterTest {
     }
 
     private static Document readToDocument(byte[] xmlAsBytes, boolean nameSpaceAware) throws ParserConfigurationException,
-            SAXException, IOException {
+        SAXException, IOException {
 
         InputStream is = new ByteArrayInputStream(xmlAsBytes);
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
@@ -150,12 +158,12 @@ public class BlueprintFileWriterTest {
             defs.add(new TransactionalDef(xpath.evaluate("@method", tx), xpath.evaluate("@value", tx)));
         }
         Set<TransactionalDef> expectedDefs = Sets.newHashSet(new TransactionalDef("*", "RequiresNew"),
-                new TransactionalDef("txNotSupported", "NotSupported"),
-                new TransactionalDef("txMandatory", "Mandatory"),
-                new TransactionalDef("txNever", "Never"),
-                new TransactionalDef("txRequired", "Required"),
-                new TransactionalDef("txOverridenWithRequiresNew", "RequiresNew"),
-                new TransactionalDef("txSupports", "Supports"));
+            new TransactionalDef("txNotSupported", "NotSupported"),
+            new TransactionalDef("txMandatory", "Mandatory"),
+            new TransactionalDef("txNever", "Never"),
+            new TransactionalDef("txRequired", "Required"),
+            new TransactionalDef("txOverridenWithRequiresNew", "RequiresNew"),
+            new TransactionalDef("txSupports", "Supports"));
         assertEquals(expectedDefs, defs);
     }
 
@@ -170,12 +178,12 @@ public class BlueprintFileWriterTest {
             defs.add(new TransactionalDef(xpath.evaluate("@method", tx), xpath.evaluate("@value", tx)));
         }
         Set<TransactionalDef> expectedDefs = Sets.newHashSet(new TransactionalDef("*", "RequiresNew"),
-                new TransactionalDef("txNotSupported", "NotSupported"),
-                new TransactionalDef("txMandatory", "Mandatory"),
-                new TransactionalDef("txNever", "Never"),
-                new TransactionalDef("txRequired", "Required"),
-                new TransactionalDef("txOverridenWithRequiresNew", "RequiresNew"),
-                new TransactionalDef("txSupports", "Supports"));
+            new TransactionalDef("txNotSupported", "NotSupported"),
+            new TransactionalDef("txMandatory", "Mandatory"),
+            new TransactionalDef("txNever", "Never"),
+            new TransactionalDef("txRequired", "Required"),
+            new TransactionalDef("txOverridenWithRequiresNew", "RequiresNew"),
+            new TransactionalDef("txSupports", "Supports"));
         assertEquals(expectedDefs, defs);
     }
 
@@ -232,7 +240,7 @@ public class BlueprintFileWriterTest {
             interfaceNames.add(interfaceValue.getTextContent());
         }
         assertEquals(Sets.newHashSet(ServiceA.class.getName(), ServiceB.class.getName()),
-                interfaceNames);
+            interfaceNames);
     }
 
     @Test
@@ -646,21 +654,21 @@ public class BlueprintFileWriterTest {
     public void generatedXmlIsValid() throws Exception {
         Document document = readToDocument(xmlAsBytes, true);
 
-        Source[] schemas = new StreamSource[]{
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/schema/example.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/osgi/service/blueprint/blueprint.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.1.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.2.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.3.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.4.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.5.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/transaction/parsing/transactionv12.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/jpa/blueprint/namespace/jpa_110.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.0.0.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.3.0.xsd")),
-                new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.2.0.xsd"))
+        Source[] schemas = new StreamSource[] {
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/schema/example.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/osgi/service/blueprint/blueprint.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.1.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.2.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.3.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.4.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/ext/impl/blueprint-ext-1.5.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/transaction/parsing/transactionv12.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/jpa/blueprint/namespace/jpa_110.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.0.0.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.3.0.xsd")),
+            new StreamSource(BlueprintFileWriterTest.class.getResourceAsStream("/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.2.0.xsd"))
         };
 
         Source xmlFile = new DOMSource(document);

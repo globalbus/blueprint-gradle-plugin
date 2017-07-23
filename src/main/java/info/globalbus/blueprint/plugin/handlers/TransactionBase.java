@@ -1,13 +1,16 @@
 package info.globalbus.blueprint.plugin.handlers;
 
-import lombok.RequiredArgsConstructor;
 import info.globalbus.blueprint.plugin.handlers.javax.Namespaces;
-import org.apache.aries.blueprint.plugin.spi.*;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.apache.aries.blueprint.plugin.spi.BeanAnnotationHandler;
+import org.apache.aries.blueprint.plugin.spi.BeanEnricher;
+import org.apache.aries.blueprint.plugin.spi.BlueprintConfiguration;
+import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
+import org.apache.aries.blueprint.plugin.spi.MethodAnnotationHandler;
 
 import static info.globalbus.blueprint.plugin.handlers.javax.Namespaces.NS_TX_1_2_0;
 import static info.globalbus.blueprint.plugin.handlers.javax.Namespaces.PATTERN_NS_TX1;
@@ -17,9 +20,7 @@ import static info.globalbus.blueprint.plugin.handlers.javax.Namespaces.PATTERN_
 public abstract class TransactionBase<T extends Annotation> implements BeanAnnotationHandler<T>, MethodAnnotationHandler<T> {
     private static final String ENABLE_ANNOTATION = "transaction.enableAnnotation";
 
-
     public abstract String getTransactionTypeName(T transactional);
-
 
     @Override
     public void handleMethodAnnotation(Class<?> clazz, List<Method> methods, ContextEnricher contextEnricher, BeanEnricher beanEnricher) {
@@ -63,7 +64,6 @@ public abstract class TransactionBase<T extends Annotation> implements BeanAnnot
             insertEnableAnnotationTx2(contextEnricher, nsTx2);
         }
     }
-
 
     private void enableAnnotationTx1(ContextEnricher contextEnricher, final String nsTx1) {
         // TX1 enable-annotation are valid only in 1.2.0 schema

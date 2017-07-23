@@ -18,11 +18,10 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import javax.inject.Singleton;
 import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.ops4j.pax.cdi.api.Properties;
 import org.ops4j.pax.cdi.api.Property;
-
-import javax.inject.Singleton;
 
 @Singleton
 @OsgiServiceProvider

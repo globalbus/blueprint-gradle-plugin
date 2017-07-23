@@ -1,20 +1,6 @@
-//plugins {
-//    id "java-gradle-plugin"
-//    id "com.gradle.plugin-publish" version "0.9.7"
-//}
-buildscript {
-    repositories {
-        maven {
-            url 'http://artifactory.ci.warta.pl:8081/artifactory/soa.warta.pl'
-        }
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.7"
-        classpath group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '4.0.0'
-    }
+plugins {
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish" version "0.9.7"
 }
 
 apply plugin: 'maven'
@@ -34,7 +20,7 @@ gradlePlugin {
 sourceCompatibility = 1.8
 
 group 'info.globalbus'
-version '0.0.14'
+version '0.1.0'
 
 repositories {
     mavenCentral()

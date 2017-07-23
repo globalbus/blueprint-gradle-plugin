@@ -18,13 +18,12 @@
  */
 package info.globalbus.blueprint.plugin.test.referencelistener;
 
+import info.globalbus.blueprint.plugin.test.ServiceA;
+import javax.inject.Singleton;
 import org.apache.aries.blueprint.annotation.referencelistener.Availability;
 import org.apache.aries.blueprint.annotation.referencelistener.Bind;
 import org.apache.aries.blueprint.annotation.referencelistener.ReferenceListener;
 import org.apache.aries.blueprint.annotation.referencelistener.Unbind;
-import info.globalbus.blueprint.plugin.test.ServiceA;
-
-import javax.inject.Singleton;
 
 @ReferenceListener(referenceInterface = ServiceA.class, filter = "(b=c)", componentName = "a", availability = Availability.MANDATORY)
 @Singleton

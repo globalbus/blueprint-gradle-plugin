@@ -18,23 +18,22 @@
  */
 package info.globalbus.blueprint.plugin.test.referencelistener;
 
-import org.apache.aries.blueprint.annotation.referencelistener.Availability;
-import org.apache.aries.blueprint.annotation.referencelistener.Cardinality;
-import org.apache.aries.blueprint.annotation.referencelistener.ReferenceListener;
 import info.globalbus.blueprint.plugin.test.ServiceB;
-
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import org.apache.aries.blueprint.annotation.referencelistener.Availability;
+import org.apache.aries.blueprint.annotation.referencelistener.Cardinality;
+import org.apache.aries.blueprint.annotation.referencelistener.ReferenceListener;
 
 @Singleton
 public class ReferenceListenerProducer {
 
     @Produces
     @ReferenceListener(cardinality = Cardinality.SINGLE,
-            referenceInterface = ServiceB.class,
-            componentName = "producer123",
-            filter = "(b=123)"
+        referenceInterface = ServiceB.class,
+        componentName = "producer123",
+        filter = "(b=123)"
     )
     @Named("referenceListenerToProduceForSingle")
     public ReferenceListenerToProduce single() {
@@ -43,12 +42,12 @@ public class ReferenceListenerProducer {
 
     @Produces
     @ReferenceListener(
-            referenceInterface = ServiceB.class,
-            componentName = "producer456",
-            filter = "(b=456)",
-            referenceName = "referenceListForProducer",
-            bindMethod = "addMe",
-            unbindMethod = "removeMe"
+        referenceInterface = ServiceB.class,
+        componentName = "producer456",
+        filter = "(b=456)",
+        referenceName = "referenceListForProducer",
+        bindMethod = "addMe",
+        unbindMethod = "removeMe"
     )
     @Named("referenceListenerToProduceForList")
     public ReferenceListenerToProduceWithoutAnnotation list() {
@@ -57,10 +56,10 @@ public class ReferenceListenerProducer {
 
     @Produces
     @ReferenceListener(
-            referenceInterface = ServiceB.class,
-            bindMethod = "addMe",
-            unbindMethod = "removeMe",
-            availability = Availability.MANDATORY
+        referenceInterface = ServiceB.class,
+        bindMethod = "addMe",
+        unbindMethod = "removeMe",
+        availability = Availability.MANDATORY
     )
     @Singleton
     @Named("referenceListenerToProduceWithBindingMethodsByName")

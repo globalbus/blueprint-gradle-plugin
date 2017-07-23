@@ -18,22 +18,21 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import javax.enterprise.inject.Produces;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import org.apache.aries.blueprint.annotation.config.Config;
 import org.apache.aries.blueprint.annotation.config.ConfigProperty;
 import org.apache.aries.blueprint.annotation.config.DefaultProperty;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 @Config(
-        pid = "org.apache.aries.my",
-        placeholderPrefix = "$[",
-        placeholderSuffix = "]",
-        defaults = {
-                @DefaultProperty(key = "title", value = "My Title"),
-                @DefaultProperty(key = "test2", value = "v2")
-        }
+    pid = "org.apache.aries.my",
+    placeholderPrefix = "$[",
+    placeholderSuffix = "]",
+    defaults = {
+        @DefaultProperty(key = "title", value = "My Title"),
+        @DefaultProperty(key = "test2", value = "v2")
+    }
 )
 @Singleton
 public class BeanWithConfig {

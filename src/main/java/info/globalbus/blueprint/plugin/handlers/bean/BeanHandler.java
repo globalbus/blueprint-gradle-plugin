@@ -18,6 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.handlers.bean;
 
+import java.lang.reflect.AnnotatedElement;
 import org.apache.aries.blueprint.annotation.bean.Activation;
 import org.apache.aries.blueprint.annotation.bean.Bean;
 import org.apache.aries.blueprint.annotation.bean.Scope;
@@ -28,13 +29,11 @@ import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.FactoryMethodFinder;
 import org.apache.aries.blueprint.plugin.spi.NamedLikeHandler;
 
-import java.lang.reflect.AnnotatedElement;
-
 public class BeanHandler implements
-        BeanFinder<Bean>,
-        FactoryMethodFinder<Bean>,
-        NamedLikeHandler<Bean>,
-        BeanAnnotationHandler<Bean> {
+    BeanFinder<Bean>,
+    FactoryMethodFinder<Bean>,
+    NamedLikeHandler<Bean>,
+    BeanAnnotationHandler<Bean> {
     @Override
     public boolean isSingleton() {
         return false;

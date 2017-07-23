@@ -20,8 +20,7 @@ package info.globalbus.blueprint.plugin.bad;
 
 import info.globalbus.blueprint.plugin.test.MyBean1;
 
-public class ParentWithField
-{
+public class ParentWithField {
     @SuppressWarnings("unused")
     private MyBean1 field;
 }

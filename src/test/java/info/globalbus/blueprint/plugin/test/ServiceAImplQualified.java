@@ -19,7 +19,6 @@
 package info.globalbus.blueprint.plugin.test;
 
 import info.globalbus.blueprint.plugin.AnnotatedService;
-
 import javax.inject.Singleton;
 
 @Singleton

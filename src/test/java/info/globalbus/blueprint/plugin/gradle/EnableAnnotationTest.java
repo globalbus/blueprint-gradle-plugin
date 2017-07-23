@@ -21,13 +21,15 @@ package info.globalbus.blueprint.plugin.gradle;
 import info.globalbus.blueprint.plugin.BlueprintConfigurationImpl;
 import info.globalbus.blueprint.plugin.model.Blueprint;
 import info.globalbus.blueprint.plugin.test.transactionenable.TxBean;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,10 +38,12 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import static info.globalbus.blueprint.plugin.gradle.FilteredClassFinder.findClasses;
 import static org.junit.Assert.assertNotNull;
@@ -53,18 +57,18 @@ public class EnableAnnotationTest {
     private static final String NS_TX1_2 = "http://aries.apache.org/xmlns/transactions/v1.2.0";
 
     private static Set<Class<?>> beanClasses;
-    
+
     private XPath xpath;
     private Document document;
 
     @BeforeClass
     public static void setUp() throws Exception {
         beanClasses = findClasses(EnableAnnotationTest.class.getClassLoader(), Collections.singletonList(
-                TxBean.class.getPackage().getName()));
+            TxBean.class.getPackage().getName()));
     }
 
     private void writeXML(String namespace, String enableAnnotations) throws XMLStreamException,
-            ParserConfigurationException, SAXException, IOException {
+        ParserConfigurationException, SAXException, IOException {
         Set<String> namespaces = new HashSet<>(Arrays.asList(NS_JPA, namespace));
         Map<String, String> customParameters = new HashMap<>();
         customParameters.put("transaction.enableAnnotation", enableAnnotations);
@@ -72,7 +76,7 @@ public class EnableAnnotationTest {
         extension.setNamespaces(namespaces);
         extension.setCustomParameters(customParameters);
         BlueprintConfigurationImpl blueprintConfiguration = new BlueprintConfigurationImpl(extension);
-        Blueprint blueprint = new Blueprint(blueprintConfiguration,  beanClasses);
+        Blueprint blueprint = new Blueprint(blueprintConfiguration, beanClasses);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new BlueprintFileWriter(os).write(blueprint);
 
@@ -123,7 +127,7 @@ public class EnableAnnotationTest {
         DocumentBuilder builder = builderFactory.newDocumentBuilder();
         return builder.parse(is);
     }
-    
+
     private Node getEnableAnnotationTx1() throws XPathExpressionException {
         return (Node) xpath.evaluate("/blueprint/enable-annotations", document, XPathConstants.NODE);
     }

@@ -18,12 +18,10 @@
  */
 package info.globalbus.blueprint.plugin.model;
 
-
 import info.globalbus.blueprint.plugin.handlers.Handlers;
+import java.lang.reflect.Method;
 import org.apache.aries.blueprint.plugin.spi.BeanAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
-
-import java.lang.reflect.Method;
 
 class BeanFromFactory extends Bean {
     private final Method producingMethod;

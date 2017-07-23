@@ -29,12 +29,18 @@ public class TransactionalDef {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TransactionalDef)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TransactionalDef)) {
+            return false;
+        }
 
         TransactionalDef that = (TransactionalDef) o;
 
-        if (method != null ? !method.equals(that.method) : that.method != null) return false;
+        if (method != null ? !method.equals(that.method) : that.method != null) {
+            return false;
+        }
         return type != null ? type.equals(that.type) : that.type == null;
 
     }

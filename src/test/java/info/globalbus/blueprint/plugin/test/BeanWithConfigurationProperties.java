@@ -18,13 +18,12 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
-import org.apache.aries.blueprint.annotation.config.ConfigProperties;
-
+import java.util.Properties;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.Properties;
+import org.apache.aries.blueprint.annotation.config.ConfigProperties;
 
 @Singleton
 public class BeanWithConfigurationProperties {
@@ -39,8 +38,8 @@ public class BeanWithConfigurationProperties {
     private Properties prop2;
 
     public BeanWithConfigurationProperties(
-            @ConfigProperties(pid = "aries.test5", update = true) @Named("testProps5") Properties prop5,
-            @ConfigProperties(pid = "aries.test6") Properties prop6) {
+        @ConfigProperties(pid = "aries.test5", update = true) @Named("testProps5") Properties prop5,
+        @ConfigProperties(pid = "aries.test6") Properties prop6) {
     }
 
     @ConfigProperties(pid = "aries.test3", update = true)

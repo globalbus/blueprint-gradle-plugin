@@ -22,17 +22,16 @@ import info.globalbus.blueprint.plugin.BlueprintConfigurationImpl;
 import info.globalbus.blueprint.plugin.gradle.PluginSettings;
 import info.globalbus.blueprint.plugin.test.MyBean3;
 import info.globalbus.blueprint.plugin.test.ServiceReferences;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.Converter;
-
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -76,7 +75,7 @@ public class BlueprintTest {
 
     private void assertSpecialRef(String expectedId, Class<?> clazz) {
         Blueprint blueprint = new Blueprint(blueprintConfiguration);
-        BeanRef ref = blueprint.getMatching(new BeanTemplate(clazz, new Annotation[]{}));
+        BeanRef ref = blueprint.getMatching(new BeanTemplate(clazz, new Annotation[] {}));
         assertEquals(expectedId, ref.id);
     }
 

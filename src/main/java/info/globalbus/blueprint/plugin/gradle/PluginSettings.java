@@ -1,12 +1,11 @@
 package info.globalbus.blueprint.plugin.gradle;
 
-import lombok.Data;
-import org.apache.aries.blueprint.plugin.spi.Activation;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.Data;
+import org.apache.aries.blueprint.plugin.spi.Activation;
 
 @Data
 public class PluginSettings {

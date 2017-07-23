@@ -18,17 +18,16 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import javax.enterprise.inject.Produces;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import org.ops4j.pax.cdi.api.OsgiServiceProvider;
 import org.ops4j.pax.cdi.api.Properties;
 import org.ops4j.pax.cdi.api.Property;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 @Singleton
 public class MyFactoryBeanAsService {
-    
+
     @Produces
     @Named("producedForService")
     @OsgiServiceProvider
@@ -42,6 +41,7 @@ public class MyFactoryBeanAsService {
     public MyProduced createBeanWithServiceExpose2() {
         return new MyProduced("My message");
     }
+
     @Produces
     @Named("producedForServiceWithTwoInterfaces")
     @OsgiServiceProvider(classes = {MyProduced.class, ServiceA.class})

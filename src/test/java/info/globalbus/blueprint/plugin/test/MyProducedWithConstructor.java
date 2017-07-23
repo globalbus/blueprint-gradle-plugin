@@ -18,10 +18,9 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
-import org.ops4j.pax.cdi.api.OsgiService;
-
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.ops4j.pax.cdi.api.OsgiService;
 
 public class MyProducedWithConstructor {
 

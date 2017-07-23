@@ -18,13 +18,12 @@
  */
 package info.globalbus.blueprint.plugin.handlers.javax;
 
+import java.lang.reflect.Field;
+import java.util.List;
+import javax.persistence.PersistenceContext;
 import org.apache.aries.blueprint.plugin.spi.BeanEnricher;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.FieldAnnotationHandler;
-
-import javax.persistence.PersistenceContext;
-import java.lang.reflect.Field;
-import java.util.List;
 
 public class PersistenceContextHandler implements FieldAnnotationHandler<PersistenceContext> {
 

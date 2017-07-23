@@ -18,10 +18,9 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
-import org.springframework.context.annotation.DependsOn;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
+import org.springframework.context.annotation.DependsOn;
 
 @Singleton
 @DependsOn

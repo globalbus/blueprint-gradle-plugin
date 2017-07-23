@@ -18,10 +18,9 @@
  */
 package info.globalbus.blueprint.plugin.extension;
 
+import java.util.Map;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.ContextInitializationHandler;
-
-import java.util.Map;
 
 public class InitContextExample implements ContextInitializationHandler {
     @Override

@@ -18,12 +18,10 @@
  */
 package info.globalbus.blueprint.plugin.bad;
 
+import info.globalbus.blueprint.plugin.test.MyBean1;
 import javax.inject.Inject;
 
-import info.globalbus.blueprint.plugin.test.MyBean1;
-
-public class ParentWithInjectedField
-{
+public class ParentWithInjectedField {
     @SuppressWarnings("unused")
     @Inject
     private MyBean1 field;

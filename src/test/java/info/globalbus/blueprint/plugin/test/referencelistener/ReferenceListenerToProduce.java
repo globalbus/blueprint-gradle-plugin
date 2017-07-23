@@ -18,9 +18,9 @@
  */
 package info.globalbus.blueprint.plugin.test.referencelistener;
 
+import info.globalbus.blueprint.plugin.test.ServiceB;
 import org.apache.aries.blueprint.annotation.referencelistener.Bind;
 import org.apache.aries.blueprint.annotation.referencelistener.Unbind;
-import info.globalbus.blueprint.plugin.test.ServiceB;
 
 public class ReferenceListenerToProduce {
     @Bind

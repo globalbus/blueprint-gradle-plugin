@@ -18,14 +18,13 @@
  */
 package info.globalbus.blueprint.plugin.test.referencelistener;
 
+import info.globalbus.blueprint.plugin.test.ServiceA;
+import javax.inject.Singleton;
 import org.apache.aries.blueprint.annotation.referencelistener.Cardinality;
 import org.apache.aries.blueprint.annotation.referencelistener.ReferenceListener;
-import info.globalbus.blueprint.plugin.test.ServiceA;
-
-import javax.inject.Singleton;
 
 @ReferenceListener(referenceInterface = ServiceA.class, cardinality = Cardinality.MULTIPLE,
-        referenceName = "serviceAReference", bindMethod = "addMe", unbindMethod = "removeMe")
+    referenceName = "serviceAReference", bindMethod = "addMe", unbindMethod = "removeMe")
 @Singleton
 public class ReferenceListenerBeanWithoutMethodsAnnotation {
     public void addMe(ServiceA serviceB) {

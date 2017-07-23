@@ -19,6 +19,11 @@
 package info.globalbus.blueprint.plugin.handlers.referencelistener;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.util.List;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import org.apache.aries.blueprint.annotation.referencelistener.Bind;
 import org.apache.aries.blueprint.annotation.referencelistener.Cardinality;
 import org.apache.aries.blueprint.annotation.referencelistener.ReferenceListener;
@@ -26,12 +31,6 @@ import org.apache.aries.blueprint.annotation.referencelistener.Unbind;
 import org.apache.aries.blueprint.plugin.spi.BeanAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.BeanEnricher;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.util.List;
 import org.gradle.api.GradleException;
 
 public class ReferenceListenerHandler implements BeanAnnotationHandler<ReferenceListener> {
@@ -42,7 +41,7 @@ public class ReferenceListenerHandler implements BeanAnnotationHandler<Reference
         String bindMethod = annotation.bindMethod().isEmpty() ? getAnnotatedMethodName(referenceListenerClass, Bind.class) : annotation.bindMethod();
         String unbindMethod = annotation.unbindMethod().isEmpty() ? getAnnotatedMethodName(referenceListenerClass, Unbind.class) : annotation.unbindMethod();
         ReferenceListenerDefinition referenceListenerDefinition = new ReferenceListenerDefinition(
-                id, bindMethod, unbindMethod
+            id, bindMethod, unbindMethod
         );
         String referenceBeanName = annotation.referenceName().isEmpty() ? createReferenceBeanName(annotation) : annotation.referenceName();
         if (annotation.cardinality() == Cardinality.SINGLE) {

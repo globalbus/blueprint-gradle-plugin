@@ -18,10 +18,9 @@
  */
 package info.globalbus.blueprint.plugin.model;
 
-import lombok.Getter;
-
 import java.util.SortedSet;
 import java.util.TreeSet;
+import lombok.Getter;
 
 class BeanRefStore {
     @Getter

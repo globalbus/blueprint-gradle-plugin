@@ -19,11 +19,10 @@
 package info.globalbus.blueprint.plugin.test.referencelistener;
 
 import com.google.inject.Singleton;
+import info.globalbus.blueprint.plugin.test.ServiceA;
+import javax.inject.Named;
 import org.apache.aries.blueprint.annotation.referencelistener.Cardinality;
 import org.apache.aries.blueprint.annotation.referencelistener.ReferenceListener;
-import info.globalbus.blueprint.plugin.test.ServiceA;
-
-import javax.inject.Named;
 
 @ReferenceListener(referenceInterface = ServiceA.class, cardinality = Cardinality.SINGLE, referenceName = "serviceAReferenceWithoutMethods")
 @Singleton

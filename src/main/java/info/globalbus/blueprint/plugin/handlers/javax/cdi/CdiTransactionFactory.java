@@ -20,9 +20,7 @@ package info.globalbus.blueprint.plugin.handlers.javax.cdi;
 
 import com.google.common.base.CaseFormat;
 import info.globalbus.blueprint.plugin.handlers.TransactionBase;
-
 import javax.transaction.cdi.Transactional;
-
 
 public class CdiTransactionFactory extends TransactionBase<Transactional> {
 

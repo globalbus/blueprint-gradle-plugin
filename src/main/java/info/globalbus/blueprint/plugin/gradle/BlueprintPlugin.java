@@ -10,6 +10,7 @@ public class BlueprintPlugin implements Plugin<Project> {
     @Override
     public void apply(Project target) {
         target.getPlugins().apply("java");
+        target.getPlugins().apply("osgi");
         target.getExtensions().add("settings", PluginSettings.class);
         BlueprintGenerate task = target.getTasks().create("blueprintGenerate", BlueprintGenerate.class);
         SourceSet main = ((SourceSetContainer) target.getProperties().get("sourceSets")).getByName("main");

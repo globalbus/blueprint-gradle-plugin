@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -22,7 +22,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -57,7 +56,7 @@ final class Introspector {
         Class<?> clazz = originalClazz;
 
         // For each parent class of clazz...
-        while(clazz != null && clazz != Object.class) {
+        while (clazz != null && clazz != Object.class) {
             for (Field field : clazz.getDeclaredFields()) {
                 // ...add all declared fields
                 fieldsByName.put(field.getName(), field);
@@ -89,7 +88,7 @@ final class Introspector {
                                               Collection<Field> acceptedFieldsWithSameName) {
         if (acceptedFieldsWithSameName.size() > 1) {
             String header = String.format("Field '%s' in bean class '%s' has been defined multiple times in:",
-                                          acceptedFieldName, originalClazz.getName());
+                acceptedFieldName, originalClazz.getName());
             StringBuilder msgBuilder = new StringBuilder(header);
             for (Field field : acceptedFieldsWithSameName) {
                 msgBuilder.append("\n\t- ").append(field.getDeclaringClass().getName());
@@ -115,7 +114,7 @@ final class Introspector {
     final List<Method> methodsWith(Class<? extends Annotation>... annotationClasses) {
         List<Method> methods = new ArrayList<>();
         for (Method method : originalClazz.getMethods()) {
-            for(Class<? extends Annotation> annotationClass : annotationClasses) {
+            for (Class<? extends Annotation> annotationClass : annotationClasses) {
                 if (method.getAnnotation(annotationClass) != null) {
                     methods.add(method);
                     break;

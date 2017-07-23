@@ -18,17 +18,16 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
-import org.ops4j.pax.cdi.api.OsgiService;
-import org.springframework.beans.factory.annotation.Value;
-
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import org.ops4j.pax.cdi.api.OsgiService;
+import org.springframework.beans.factory.annotation.Value;
 
 @Singleton
 public class MyFactoryBean {
-    
+
     @Inject
     ServiceB serviceB;
 

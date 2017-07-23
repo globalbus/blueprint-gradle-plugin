@@ -24,10 +24,10 @@ public class CamelContextWriter implements XmlWriter {
     public void write(XMLStreamWriter writer) throws XMLStreamException {
         writer.writeStartElement("camelContext");
         writer.writeDefaultNamespace(NS_CAMEL);
-        if (StringUtils.isNotBlank(camelOpts.get("contextId").toString())) {
+        if (StringUtils.isNotBlank(String.valueOf(camelOpts.get("contextId")))) {
             writer.writeAttribute("id", camelOpts.get("contextId").toString());
         }
-        if (StringUtils.isNotBlank(camelOpts.get("properties").toString())) {
+        if (StringUtils.isNotBlank(String.valueOf(camelOpts.get("properties")))) {
             writePropertyPlaceholder(writer);
         }
         for (String pkg : scanPackages) {

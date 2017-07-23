@@ -19,13 +19,12 @@
 package info.globalbus.blueprint.plugin.test;
 
 import info.globalbus.blueprint.plugin.AnnotatedService;
-import org.ops4j.pax.cdi.api.OsgiService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import org.ops4j.pax.cdi.api.OsgiService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
 
 @Singleton
 @DependsOn("myBean6")

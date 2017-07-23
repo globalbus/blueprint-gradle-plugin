@@ -19,7 +19,6 @@
 package info.globalbus.blueprint.plugin.model;
 
 import info.globalbus.blueprint.plugin.handlers.Handlers;
-
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;

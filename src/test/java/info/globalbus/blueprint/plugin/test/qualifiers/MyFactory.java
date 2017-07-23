@@ -18,9 +18,8 @@
  */
 package info.globalbus.blueprint.plugin.test.qualifiers;
 
-import org.apache.aries.blueprint.annotation.bean.Bean;
-
 import javax.inject.Named;
+import org.apache.aries.blueprint.annotation.bean.Bean;
 
 @Bean
 public class MyFactory {

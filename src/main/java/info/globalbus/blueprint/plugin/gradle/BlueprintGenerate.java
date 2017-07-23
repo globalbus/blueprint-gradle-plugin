@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
@@ -38,11 +39,6 @@ public class BlueprintGenerate extends DefaultTask {
 
     public static final String IMPORT_PACKAGE = "Import-Package";
 
-    @OutputDirectory
-    public File getGeneratedDir() {
-        return new File(getProject().getBuildDir(), "generatedsources");
-    }
-
     @TaskAction
     public void blueprintGenerate() {
         try {
@@ -54,8 +50,13 @@ public class BlueprintGenerate extends DefaultTask {
             impl.execute();
         } catch (Exception ex) {
             log.error("Error on creating blueprint description", ex);
-            throw ex;
+            throw new GradleException("Error on creating blueprint description", ex);
         }
+    }
+
+    @OutputDirectory
+    public File getGeneratedDir() {
+        return new File(getProject().getBuildDir(), "generatedsources");
     }
 
     @InputFiles
@@ -64,34 +65,9 @@ public class BlueprintGenerate extends DefaultTask {
         return main.getAllJava().getSrcDirs();
     }
 
-
     @RequiredArgsConstructor
     private class BlueprintGenerateImpl {
         final PluginSettings extension;
-
-        private List<String> getPackagesToScan() {
-            List<String> toScan = extension.getScanPaths();
-            log.info("Scan paths not specified - searching for packages");
-            Set<String> packages = PackageFinder.findPackagesInSources(getSourceDir());
-            if (packages.contains(null)) {
-                throw new GradleException("Found file without package");
-            }
-            if (toScan == null || toScan.isEmpty() || toScan.iterator().next() == null) {
-                toScan = new ArrayList<>(packages);
-            }
-            toScan.addAll(packages);
-            Collections.sort(toScan);
-            extension.setScanPaths(toScan);
-            for (String aPackage : toScan) {
-                log.info("Package " + aPackage + " will be scanned");
-            }
-            return toScan;
-        }
-
-        private File getClassesDir(Project project) {
-            SourceSet main = ((SourceSetContainer) project.getProperties().get("sourceSets")).getByName("main");
-            return main.getOutput().getClassesDir();
-        }
 
         public void execute() {
             List<String> toScan = getPackagesToScan();
@@ -108,34 +84,73 @@ public class BlueprintGenerate extends DefaultTask {
             }
         }
 
-        private void writeBlueprintIfNeeded(Blueprint blueprint) throws IOException, XMLStreamException {
-            if (blueprint.shouldBeGenerated()) {
-                writeBlueprint(blueprint);
-                Jar jarTask = (Jar) getProject().getTasks().getByName("jar");
-                Manifest manifest = jarTask.getManifest();
-                if (manifest != null && manifest instanceof OsgiManifest) {
-                    OsgiManifest osgiManifest = ((OsgiManifest) manifest);
-                    List<String> actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
-                    if (actual == null) {
-                        osgiManifest.instruction(IMPORT_PACKAGE, "*");
-                        actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
-                    }
-                    if (actual.contains("*")) {
-                        actual.remove("*");
-                    }
-                    List<String> packages = new LinkedList<>();
-                    packages.addAll(blueprint.getGeneratedPackages());
-                    packages.add("*");
-                    for (String inst : actual) {
-                        String prefix = StringUtils.split(inst, "*")[0];
-                        packages = packages.stream().filter(p -> !p.startsWith(prefix)).collect(Collectors.toList());
-                    }
-                    actual.addAll(packages);
+        private void addToManifest(Blueprint blueprint) {
+            Jar jarTask = (Jar) getProject().getTasks().getByName("jar");
+            Manifest manifest = jarTask.getManifest();
+            if (manifest != null && manifest instanceof OsgiManifest) {
+                OsgiManifest osgiManifest = ((OsgiManifest) manifest);
+                List<String> actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
+                if (actual == null) {
+                    osgiManifest.instruction(IMPORT_PACKAGE, "*");
+                    actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
                 }
-
-            } else {
-                log.warn("Skipping blueprint generation because no beans were found");
+                if (actual.contains("*")) {
+                    actual.remove("*");
+                }
+                List<String> packages = new LinkedList<>();
+                packages.addAll(blueprint.getGeneratedPackages());
+                packages.add("*");
+                for (String inst : actual) {
+                    String prefix = StringUtils.split(inst, "*")[0];
+                    packages = packages.stream().filter(p -> !p.startsWith(prefix)).collect(Collectors.toList());
+                }
+                actual.addAll(packages);
             }
+        }
+
+        private ClassLoader createProjectScopeFinder() throws MalformedURLException {
+            List<URL> urls = new ArrayList<>();
+
+            urls.addAll(getClassesDir(getProject()).stream().map(File::toURI).map(v -> {
+                try {
+                    return v.toURL();
+                } catch (MalformedURLException ex) {
+                    log.info("Cannot parse classDir", ex);
+                    return null;
+                }
+            }).filter(Objects::nonNull).collect(Collectors.toList()));
+            //
+            for (File artifact : getProject().getConfigurations().getByName("runtime").getResolvedConfiguration()
+                .getFiles()) {
+                urls.add(artifact.toURI().toURL());
+            }
+
+            return new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
+        }
+
+        private Set<File> getClassesDir(Project project) {
+            SourceSet main = ((SourceSetContainer) project.getProperties().get("sourceSets")).getByName("main");
+            return main.getOutput().getClassesDirs().getFiles();
+        }
+
+        private List<String> getPackagesToScan() {
+            List<String> toScan = extension.getScanPaths();
+            log.info("Scan paths not specified - searching for packages");
+            Set<String> packages = PackageFinder.findPackagesInSources(getSourceDir());
+            if (packages.contains(null)) {
+                throw new GradleException("Found file without package");
+            }
+            if (toScan == null || toScan.isEmpty() || toScan.iterator().next() == null) {
+                toScan = new ArrayList<>(packages);
+            } else {
+                toScan.addAll(packages);
+            }
+            Collections.sort(toScan);
+            extension.setScanPaths(toScan);
+            for (String aPackage : toScan) {
+                log.info("Package " + aPackage + " will be scanned");
+            }
+            return toScan;
         }
 
         private void writeBlueprint(Blueprint blueprint) throws IOException, XMLStreamException {
@@ -149,17 +164,13 @@ public class BlueprintGenerate extends DefaultTask {
             }
         }
 
-        private ClassLoader createProjectScopeFinder() throws MalformedURLException {
-            List<URL> urls = new ArrayList<>();
-
-            urls.add(getClassesDir(getProject()).toURI().toURL());
-            //
-            for (File artifact : getProject().getConfigurations().getByName("runtime").getResolvedConfiguration()
-                .getFiles()) {
-                urls.add(artifact.toURI().toURL());
+        private void writeBlueprintIfNeeded(Blueprint blueprint) throws IOException, XMLStreamException {
+            if (blueprint.shouldBeGenerated()) {
+                writeBlueprint(blueprint);
+                addToManifest(blueprint);
+            } else {
+                log.warn("Skipping blueprint generation because no beans were found");
             }
-
-            return new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
         }
 
     }

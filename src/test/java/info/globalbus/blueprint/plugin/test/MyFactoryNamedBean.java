@@ -18,16 +18,15 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
-
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 
 @Singleton
 public class MyFactoryNamedBean {
-    
+
     @Produces
     @Named("produced1")
     public MyProduced createBean1() {

@@ -1,11 +1,12 @@
 package info.globalbus.blueprint.plugin.gradle;
 
 import org.gradle.api.Action;
-import org.gradle.api.Task;
-import org.junit.Test;
-import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.api.Project;
-import static org.junit.Assert.*;
+import org.gradle.api.Task;
+import org.gradle.testfixtures.ProjectBuilder;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 public class GradlePluginTest {
 
