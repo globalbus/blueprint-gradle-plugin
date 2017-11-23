@@ -22,6 +22,8 @@ import info.globalbus.blueprint.plugin.model.Blueprint;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.XmlWriter;
@@ -37,13 +39,20 @@ public class OsgiServiceHandler implements CustomDependencyAnnotationHandler<Osg
     @Override
     public String handleDependencyAnnotation(AnnotatedElement annotatedElement, String name, ContextEnricher
         contextEnricher) {
+        Class<?> clazz = getClass(annotatedElement);
+        OsgiService annotation = annotatedElement.getAnnotation(OsgiService.class);
         final ServiceFilter serviceFilter = extractServiceFilter(annotatedElement);
-        final String id = name != null ? name : generateReferenceId(getClass(annotatedElement), serviceFilter);
-        final Class<?> clazz = getClass(annotatedElement);
-
-        contextEnricher.addBean(id, getClass(annotatedElement));
-        contextEnricher.addBlueprintContentWriter(getWriterId(id, clazz), getXmlWriter(id, clazz, serviceFilter));
-
+        XmlWriter xmlWriter;
+        String id = name != null ? name : generateReferenceId(clazz, serviceFilter);
+        if (List.class.isAssignableFrom(clazz)) {
+            clazz = getGenericType(annotatedElement);
+            id = name != null ? name : generateReferenceId(clazz, serviceFilter);
+            xmlWriter = getXmlListWriter(id, clazz, annotation, serviceFilter);
+        } else {
+            xmlWriter = getXmlElementWriter(id, clazz, annotation, serviceFilter);
+        }
+        contextEnricher.addBean(id, clazz);
+        contextEnricher.addBlueprintContentWriter(getWriterId(id, clazz), xmlWriter);
         Blueprint blueprint = (Blueprint) contextEnricher;
         blueprint.getInterfaces().add(clazz.getPackage().getName());
         return id;
@@ -51,16 +60,38 @@ public class OsgiServiceHandler implements CustomDependencyAnnotationHandler<Osg
 
     @Override
     public String handleDependencyAnnotation(final Class<?> clazz, OsgiService annotation, String name,
-                                             ContextEnricher contextEnricher) {
+        ContextEnricher contextEnricher) {
         final ServiceFilter serviceFilter = extractServiceFilter(annotation);
         final String id = name != null ? name : generateReferenceId(clazz, serviceFilter);
 
         contextEnricher.addBean(id, clazz);
-        contextEnricher.addBlueprintContentWriter(getWriterId(id, clazz), getXmlWriter(id, clazz, serviceFilter));
+        contextEnricher.addBlueprintContentWriter(getWriterId(id, clazz), getXmlElementWriter(id, clazz,
+            annotation, serviceFilter));
         return id;
     }
 
-    private XmlWriter getXmlWriter(final String id, final Class<?> clazz, final ServiceFilter serviceFilter) {
+    private XmlWriter getXmlListWriter(final String id, final Class<?> clazz, OsgiService annotation, final
+    ServiceFilter serviceFilter) {
+        return writer -> {
+            writer.writeEmptyElement("reference-list");
+            writer.writeAttribute("id", id);
+            writer.writeAttribute("interface", clazz.getName());
+            if (annotation.required()) {
+                writer.writeAttribute("availability", "mandatory");
+            } else {
+                writer.writeAttribute("availability", "optional");
+            }
+            if (serviceFilter.filter != null && !"".equals(serviceFilter.filter)) {
+                writer.writeAttribute("filter", serviceFilter.filter);
+            }
+            if (serviceFilter.compName != null && !"".equals(serviceFilter.compName)) {
+                writer.writeAttribute("component-name", serviceFilter.compName);
+            }
+        };
+    }
+
+    private XmlWriter getXmlElementWriter(final String id, final Class<?> clazz, OsgiService annotation, final
+    ServiceFilter serviceFilter) {
         return writer -> {
             writer.writeEmptyElement("reference");
             writer.writeAttribute("id", id);
@@ -89,6 +120,18 @@ public class OsgiServiceHandler implements CustomDependencyAnnotationHandler<Osg
             return ((Field) annotatedElement).getType();
         }
         throw new GradleException("Unknown annotated element");
+    }
+
+    private Class<?> getGenericType(AnnotatedElement annotatedElement) {
+        ParameterizedType genericType;
+        if (annotatedElement instanceof Method) {
+            genericType = (ParameterizedType) ((Method) annotatedElement).getGenericParameterTypes()[0];
+        } else if (annotatedElement instanceof Field) {
+            genericType = (ParameterizedType) ((Field) annotatedElement).getGenericType();
+        } else {
+            throw new GradleException("Unknown annotated element");
+        }
+        return (Class<?>) (genericType).getActualTypeArguments()[0];
     }
 
     private ServiceFilter extractServiceFilter(AnnotatedElement annotatedElement) {
