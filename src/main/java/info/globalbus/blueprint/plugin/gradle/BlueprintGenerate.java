@@ -10,12 +10,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,21 +100,25 @@ public class BlueprintGenerate extends DefaultTask {
                 if (actual.contains("*")) {
                     actual.remove("*");
                 }
-                List<String> packages = new LinkedList<>();
+                final List<String> packages = new LinkedList<>();
+                Optional.ofNullable(extension.getCustomOptions()).map(v -> v.get("importMixin"))
+                    .filter(v -> v instanceof Collection).map(v -> (Collection<String>) v)
+                    .ifPresent(v -> packages.addAll(v));
                 packages.addAll(blueprint.getGeneratedPackages());
                 packages.add("*");
+                Stream<String> filter = packages.stream();
                 for (String inst : actual) {
                     String prefix = StringUtils.split(inst, "*")[0];
-                    packages = packages.stream().filter(p -> !p.startsWith(prefix)).collect(Collectors.toList());
+                    filter = filter.filter(p -> !p.startsWith(prefix));
                 }
-                actual.addAll(packages);
+                actual.addAll(filter.collect(Collectors.toList()));
             }
         }
 
         private ClassLoader createProjectScopeFinder() throws MalformedURLException {
             List<URL> urls = new ArrayList<>();
 
-            urls.addAll(getClassesDir(getProject()).stream().map(File::toURI).map(v -> {
+            urls.addAll(Stream.of(getClassesDir(getProject())).map(File::toURI).map(v -> {
                 try {
                     return v.toURL();
                 } catch (MalformedURLException ex) {
@@ -128,9 +135,9 @@ public class BlueprintGenerate extends DefaultTask {
             return new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
         }
 
-        private Set<File> getClassesDir(Project project) {
+        private File getClassesDir(Project project) {
             SourceSet main = ((SourceSetContainer) project.getProperties().get("sourceSets")).getByName("main");
-            return main.getOutput().getClassesDirs().getFiles();
+            return main.getOutput().getClassesDir();
         }
 
         private List<String> getPackagesToScan() {
