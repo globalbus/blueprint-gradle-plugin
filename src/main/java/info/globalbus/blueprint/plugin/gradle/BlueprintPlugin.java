@@ -12,13 +12,14 @@ public class BlueprintPlugin implements Plugin<Project> {
         target.getPlugins().apply("java");
         target.getPlugins().apply("osgi");
         target.getExtensions().add("settings", PluginSettings.class);
-        BlueprintGenerate task = target.getTasks().create("blueprintGenerate", BlueprintGenerate.class);
+        BlueprintGenerate blueprintGenerate = target.getTasks().create("blueprintGenerate", BlueprintGenerate.class);
         SourceSet main = ((SourceSetContainer) target.getProperties().get("sourceSets")).getByName("main");
-        main.getResources().srcDir(task.getGeneratedDir());
-        task.mustRunAfter("compileJava");
-        target.getTasks().getByName("processResources").dependsOn(task);
-        target.getTasks().getByName("jar").dependsOn(task);
-        task.getOutputs().upToDateWhen(v -> false);
+        main.getResources().srcDir(blueprintGenerate.getGeneratedDir());
+        blueprintGenerate.mustRunAfter("compileJava");
+        target.getTasks().getByName("processResources").dependsOn(blueprintGenerate);
+        ImportMixinTask importMixin = target.getTasks().create("importMixin", ImportMixinTask.class);
+        importMixin.dependsOn(blueprintGenerate);
+        target.getTasks().getByName("jar").dependsOn(importMixin);
     }
 
 }

@@ -2,45 +2,41 @@ package info.globalbus.blueprint.plugin.gradle;
 
 import info.globalbus.blueprint.plugin.BlueprintConfigurationImpl;
 import info.globalbus.blueprint.plugin.model.Blueprint;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
-import org.gradle.api.java.archives.Manifest;
-import org.gradle.api.plugins.osgi.OsgiManifest;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.bundling.Jar;
 
 @Slf4j
 @CacheableTask
 public class BlueprintGenerate extends DefaultTask {
 
-    public static final String IMPORT_PACKAGE = "Import-Package";
+    public static final String BLUEPRINT_IMPORTS_TMP = "BlueprintImports.tmp";
 
     @TaskAction
     public void blueprintGenerate() {
@@ -68,6 +64,11 @@ public class BlueprintGenerate extends DefaultTask {
         return main.getAllJava().getSrcDirs();
     }
 
+    @OutputDirectory
+    public File getTmpDir() {
+        return new File(getProject().getBuildDir(), "tmp");
+    }
+
     @RequiredArgsConstructor
     private class BlueprintGenerateImpl {
         final PluginSettings extension;
@@ -88,44 +89,28 @@ public class BlueprintGenerate extends DefaultTask {
         }
 
         private void addToManifest(Blueprint blueprint) {
-            Jar jarTask = (Jar) getProject().getTasks().getByName("jar");
-            Manifest manifest = jarTask.getManifest();
-            if (manifest != null && manifest instanceof OsgiManifest) {
-                OsgiManifest osgiManifest = ((OsgiManifest) manifest);
-                List<String> actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
-                if (actual == null) {
-                    osgiManifest.instruction(IMPORT_PACKAGE, "*");
-                    actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
+            File outputFile = new File(getTmpDir(), BLUEPRINT_IMPORTS_TMP);
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile)))) {
+                for (String str : blueprint.getGeneratedPackages()) {
+                    writer.write(str);
+                    writer.write("\n");
                 }
-                if (actual.contains("*")) {
-                    actual.remove("*");
-                }
-                final List<String> packages = new LinkedList<>();
-                Optional.ofNullable(extension.getCustomOptions()).map(v -> v.get("importMixin"))
-                    .filter(v -> v instanceof Collection).map(v -> (Collection<String>) v)
-                    .ifPresent(v -> packages.addAll(v));
-                packages.addAll(blueprint.getGeneratedPackages());
-                packages.add("*");
-                Stream<String> filter = packages.stream();
-                for (String inst : actual) {
-                    String prefix = StringUtils.split(inst, "*")[0];
-                    filter = filter.filter(p -> !p.startsWith(prefix));
-                }
-                actual.addAll(filter.collect(Collectors.toList()));
+            } catch (IOException ex) {
+                throw new GradleException("Cannot save blueprint imports", ex);
             }
         }
 
         private ClassLoader createProjectScopeFinder() throws MalformedURLException {
-            List<URL> urls = new ArrayList<>();
 
-            urls.addAll(Stream.of(getClassesDir(getProject())).map(File::toURI).map(v -> {
-                try {
-                    return v.toURL();
-                } catch (MalformedURLException ex) {
-                    log.info("Cannot parse classDir", ex);
-                    return null;
-                }
-            }).filter(Objects::nonNull).collect(Collectors.toList()));
+            List<URL> urls = Stream.of(getClassesDir(getProject())).flatMap(Collection::stream).map(File::toURI)
+                .map(v -> {
+                    try {
+                        return v.toURL();
+                    } catch (MalformedURLException ex) {
+                        log.info("Cannot parse classDir", ex);
+                        return null;
+                    }
+                }).filter(Objects::nonNull).collect(Collectors.toList());
             //
             for (File artifact : getProject().getConfigurations().getByName("runtime").getResolvedConfiguration()
                 .getFiles()) {
@@ -135,9 +120,9 @@ public class BlueprintGenerate extends DefaultTask {
             return new URLClassLoader(urls.toArray(new URL[urls.size()]), getClass().getClassLoader());
         }
 
-        private File getClassesDir(Project project) {
+        private Set<File> getClassesDir(Project project) {
             SourceSet main = ((SourceSetContainer) project.getProperties().get("sourceSets")).getByName("main");
-            return main.getOutput().getClassesDir();
+            return main.getOutput().getClassesDirs().getFiles();
         }
 
         private List<String> getPackagesToScan() {
