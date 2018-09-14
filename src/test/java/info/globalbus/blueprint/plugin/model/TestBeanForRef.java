@@ -18,8 +18,8 @@
  */
 package info.globalbus.blueprint.plugin.model;
 
-import info.globalbus.blueprint.plugin.test.ServiceA;
-import info.globalbus.blueprint.plugin.test.ServiceB;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceA;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceB;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;

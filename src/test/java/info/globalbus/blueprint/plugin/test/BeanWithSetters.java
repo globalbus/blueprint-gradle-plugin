@@ -18,6 +18,8 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceA;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceB;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;

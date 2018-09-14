@@ -19,8 +19,9 @@
 package info.globalbus.blueprint.plugin.handlers.javax;
 
 import javax.inject.Named;
+import org.apache.aries.blueprint.plugin.spi.BeanFinder;
 
-public class NamedBeanFinder implements org.apache.aries.blueprint.plugin.spi.BeanFinder<Named> {
+public class NamedBeanFinder implements BeanFinder<Named> {
     @Override
     public Class<Named> getAnnotation() {
         return Named.class;

@@ -28,6 +28,8 @@ import org.gradle.api.Project;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskAction;
@@ -59,6 +61,7 @@ public class BlueprintGenerate extends DefaultTask {
     }
 
     @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     public Set<File> getSourceDir() {
         SourceSet main = ((SourceSetContainer) getProject().getProperties().get("sourceSets")).getByName("main");
         return main.getAllJava().getSrcDirs();
@@ -73,7 +76,7 @@ public class BlueprintGenerate extends DefaultTask {
     private class BlueprintGenerateImpl {
         final PluginSettings extension;
 
-        public void execute() {
+        void execute() {
             List<String> toScan = getPackagesToScan();
 
             try {

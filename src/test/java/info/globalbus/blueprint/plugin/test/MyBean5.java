@@ -19,6 +19,9 @@
 package info.globalbus.blueprint.plugin.test;
 
 import info.globalbus.blueprint.plugin.AnnotatedService;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceA;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceB;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceC;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -30,35 +33,15 @@ import org.springframework.context.annotation.DependsOn;
 @DependsOn("myBean6")
 public class MyBean5 {
 
-    ServiceA serviceA1;
-
-    ServiceA serviceA2;
-
-    ServiceB serviceB;
-
-    int bla;
-
-    ServiceC myReference;
-    ServiceC myReference2;
-
-    ServiceA serviceAAnnotated;
-
     @Inject
     public MyBean5(@Named("my2") ServiceA serviceA1,
-                   ServiceA serviceA2,
-                   ServiceB serviceB,
-                   @Value("100") int bla,
-                   @OsgiService(filter = "myRef") @Named("ser1") ServiceC myReference,
-                   @OsgiService(filter = "(mode=123)") @Named("ser2") ServiceC myReference2,
-                   @AnnotatedService ServiceA serviceAAnnotated,
-                   @Named("produced2") MyProduced myProduced) {
-        this.serviceA1 = serviceA1;
-        this.serviceA2 = serviceA2;
-        this.serviceB = serviceB;
-        this.bla = bla;
-        this.myReference = myReference;
-        this.myReference2 = myReference2;
-        this.serviceAAnnotated = serviceAAnnotated;
+        ServiceA serviceA2,
+        ServiceB serviceB,
+        @Value("100") int bla,
+        @OsgiService(filter = "myRef") @Named("ser1") ServiceC myReference,
+        @OsgiService(filter = "(mode=123)") @Named("ser2") ServiceC myReference2,
+        @AnnotatedService ServiceA serviceAAnnotated,
+        @Named("produced2") MyProduced myProduced) {
     }
 
     public MyBean5() {

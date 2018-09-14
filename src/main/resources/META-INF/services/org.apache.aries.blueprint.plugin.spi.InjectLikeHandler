@@ -15,5 +15,5 @@
 # limitations under the License.
 #
 
-info.globalbus.blueprint.plugin.handlers.spring.AutowiredAsInject
 info.globalbus.blueprint.plugin.handlers.javax.InjectHandler
+info.globalbus.blueprint.plugin.handlers.spring.AutowiredAsInject

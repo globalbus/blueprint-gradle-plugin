@@ -9,9 +9,6 @@ import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 import org.apache.aries.blueprint.plugin.spi.ContextInitializationHandler;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 
-/**
- * Created by globalbus on 15.04.17.
- */
 @Slf4j
 public class CamelContext implements ContextInitializationHandler {
 
@@ -29,7 +26,7 @@ public class CamelContext implements ContextInitializationHandler {
         if (toScan == null || toScan.isEmpty() || customOptions == null) {
             return;
         }
-        if (!toScan.isEmpty() && customOptions.containsKey("contextId")) {
+        if (customOptions.containsKey("contextId")) {
             CamelContextWriter writer = new CamelContextWriter(toScan, customOptions);
             contextEnricher.addBean((String) customOptions.get("contextId"), BlueprintCamelContext.class);
             contextEnricher.addBlueprintContentWriter(CamelContextWriter.class.getName(), writer);

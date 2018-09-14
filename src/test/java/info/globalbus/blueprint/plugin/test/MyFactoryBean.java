@@ -18,6 +18,8 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceB;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceC;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +39,8 @@ public class MyFactoryBean {
     }
 
     @Produces
-    public MyProducedWithConstructor createBeanWithParameters(MyBean1 myBean1, @Value("100") int bla, @OsgiService(filter = "myRef") @Named("ser1") ServiceC myReference) {
+    public MyProducedWithConstructor createBeanWithParameters(MyBean1 myBean1, @Value("100") int bla,
+        @OsgiService(filter = "myRef") @Named("ser1") ServiceC myReference) {
         return new MyProducedWithConstructor(null);
     }
 }

@@ -19,34 +19,41 @@
 package info.globalbus.blueprint.plugin.gradle;
 
 import info.globalbus.blueprint.plugin.handlers.Handlers;
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import io.github.lukehutch.fastclasspathscanner.classloaderhandler.URLClassLoaderHandler;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
+import io.github.classgraph.classloaderhandler.URLClassLoaderHandler;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 @UtilityClass
+@Slf4j
 class FilteredClassFinder {
 
     @SuppressWarnings("unchecked")
     static Set<Class<?>> findClasses(ClassLoader finder, Collection<String> packageNames) {
-        return findClasses(finder, packageNames, Handlers.BEAN_MARKING_ANNOTATION_CLASSES.toArray(new Class[Handlers
-            .BEAN_MARKING_ANNOTATION_CLASSES.size()]));
+        return findClasses(finder, packageNames, Handlers.BEAN_MARKING_ANNOTATION_CLASSES
+            .toArray(new Class[Handlers.BEAN_MARKING_ANNOTATION_CLASSES.size()]));
     }
 
     private static Set<Class<?>> findClasses(ClassLoader finder, Collection<String> packageNames, Class<? extends
         Annotation>[] annotations) {
-        FastClasspathScanner fastClasspathScanner = new FastClasspathScanner(packageNames.toArray(new String[0]));
-        fastClasspathScanner.registerClassLoaderHandler(URLClassLoaderHandler.class);
-        fastClasspathScanner.addClassLoader(finder);
-        Set<Class<?>> rawClasses = new HashSet<>();
-        for (Class<? extends Annotation> annotation : annotations) {
-            fastClasspathScanner.matchClassesWithAnnotation(annotation, rawClasses::add);
+        ClassGraph classGraph = new ClassGraph();
+        classGraph.whitelistPackages(packageNames.toArray(new String[0]));
+        classGraph.enableAnnotationInfo();
+        classGraph.registerClassLoaderHandler(URLClassLoaderHandler.class);
+        classGraph.addClassLoader(finder);
+        try (ScanResult result = classGraph.scan()) {
+            Set<ClassInfo> classInfos = Stream.of(annotations)
+                .map(v -> result.getClassesWithAnnotation(v.getName()))
+                .flatMap(Collection::stream).collect(Collectors.toSet());
+            return classInfos.stream().map(ClassInfo::loadClass).collect(Collectors.toSet());
         }
-        fastClasspathScanner.scan();
-        return rawClasses;
     }
 
 }

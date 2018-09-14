@@ -18,6 +18,8 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceB;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.ops4j.pax.cdi.api.OsgiService;
@@ -35,4 +37,8 @@ public class ServiceReferencesParent {
     @Inject
     @OsgiService(filter = "(type=B3)")
     ServiceB serviceB3;
+
+    @Inject
+    @OsgiService
+    List<ServiceB> serviceBList;
 }

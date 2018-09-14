@@ -15,5 +15,5 @@
 # limitations under the License.
 #
 
+info.globalbus.blueprint.plugin.handlers.blueprint.bean.BeanHandler
 info.globalbus.blueprint.plugin.handlers.javax.ProducesHandler
-info.globalbus.blueprint.plugin.handlers.bean.BeanHandler

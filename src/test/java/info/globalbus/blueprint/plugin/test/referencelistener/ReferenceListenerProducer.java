@@ -18,7 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.test.referencelistener;
 
-import info.globalbus.blueprint.plugin.test.ServiceB;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceB;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 import javax.inject.Singleton;

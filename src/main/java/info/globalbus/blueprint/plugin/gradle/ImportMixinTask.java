@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
@@ -27,7 +26,7 @@ import org.gradle.api.tasks.bundling.Jar;
 @Slf4j
 public class ImportMixinTask extends DefaultTask {
 
-    public static final String IMPORT_PACKAGE = "Import-Package";
+    private static final String IMPORT_PACKAGE = "Import-Package";
 
     @TaskAction
     public void addToManifest() {
@@ -37,21 +36,20 @@ public class ImportMixinTask extends DefaultTask {
         }
         Jar jarTask = (Jar) getProject().getTasks().getByName("jar");
         Manifest manifest = jarTask.getManifest();
-        if (manifest != null && manifest instanceof OsgiManifest) {
+        if (manifest instanceof OsgiManifest) {
             OsgiManifest osgiManifest = ((OsgiManifest) manifest);
             List<String> actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
             if (actual == null) {
                 osgiManifest.instruction(IMPORT_PACKAGE, "*");
                 actual = osgiManifest.getInstructions().get(IMPORT_PACKAGE);
             }
-            if (actual.contains("*")) {
-                actual.remove("*");
-            }
+            actual.remove("*");
             final List<String> packages = new LinkedList<>();
             Optional.ofNullable(extension.getCustomOptions()).map(v -> v.get("importMixin"))
                 .filter(v -> v instanceof Collection).map(v -> (Collection<String>) v)
                 .ifPresent(packages::addAll);
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(getImportsFile())))) {
+            try (BufferedReader reader =
+                     new BufferedReader(new InputStreamReader(new FileInputStream(getImportsFile())))) {
                 while (reader.ready()) {
                     packages.add(reader.readLine());
                 }
@@ -72,9 +70,8 @@ public class ImportMixinTask extends DefaultTask {
     public File getImportsFile() {
         File tmp = new File(new File(getProject().getBuildDir(), "tmp"), BlueprintGenerate.BLUEPRINT_IMPORTS_TMP);
         if (!tmp.exists()) {
-            try {
-                OutputStream out = FileUtils.openOutputStream(tmp);
-                IOUtils.closeQuietly(out);
+            try (OutputStream out = FileUtils.openOutputStream(tmp)) {
+                out.flush();
             } catch (IOException ex) {
                 throw new GradleException("Cannot touch file", ex);
             }

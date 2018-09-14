@@ -28,12 +28,12 @@ import info.globalbus.blueprint.plugin.bad.BadFieldBean2;
 import info.globalbus.blueprint.plugin.bad.BadFieldBean3;
 import info.globalbus.blueprint.plugin.bad.FieldBean4;
 import info.globalbus.blueprint.plugin.gradle.PluginSettings;
-import info.globalbus.blueprint.plugin.test.BeanWithConfig;
 import info.globalbus.blueprint.plugin.test.MyBean1;
 import info.globalbus.blueprint.plugin.test.MyBean3;
 import info.globalbus.blueprint.plugin.test.MyBean4;
 import info.globalbus.blueprint.plugin.test.MyBean5;
 import info.globalbus.blueprint.plugin.test.ServiceAImpl1;
+import info.globalbus.blueprint.plugin.test.configuration.BeanWithConfig;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -124,7 +124,8 @@ public class BeanTest {
         assertEquals("blueprintBundleContext", bcProp.ref);
         assertEquals("singleton", bean.attributes.get("scope"));
 
-        Set<TransactionalDef> expectedTxs = Sets.newHashSet(new TransactionalDef("txWithoutClassAnnotation", "Supports"));
+        Set<TransactionalDef> expectedTxs = Sets.newHashSet(new TransactionalDef("txWithoutClassAnnotation",
+            "Supports"));
         assertEquals(expectedTxs, getTransactionalDefs(bean));
     }
 

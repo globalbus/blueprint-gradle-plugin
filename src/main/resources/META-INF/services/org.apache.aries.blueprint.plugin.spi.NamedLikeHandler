@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
+info.globalbus.blueprint.plugin.handlers.blueprint.bean.BeanHandler
+info.globalbus.blueprint.plugin.handlers.javax.NamedHandler
 info.globalbus.blueprint.plugin.handlers.spring.ComponentAsNamed
 info.globalbus.blueprint.plugin.handlers.spring.QualifierAsNamed
-info.globalbus.blueprint.plugin.handlers.javax.NamedHandler
-info.globalbus.blueprint.plugin.handlers.bean.BeanHandler

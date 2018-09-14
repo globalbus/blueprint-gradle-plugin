@@ -18,6 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceA;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;

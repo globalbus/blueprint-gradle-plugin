@@ -40,7 +40,7 @@ public class NamedHandler implements NamedLikeHandler {
 
     @Override
     public String getName(Object annotation) {
-        Named named = Named.class.cast(annotation);
+        Named named = (Named) annotation;
         if (StringUtils.isEmpty(named.value())) {
             return null;
         }

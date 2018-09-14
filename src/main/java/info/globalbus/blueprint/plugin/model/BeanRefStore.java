@@ -18,16 +18,25 @@
  */
 package info.globalbus.blueprint.plugin.model;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import lombok.Getter;
+import java.util.stream.Collectors;
 
 class BeanRefStore {
-    @Getter
     private final SortedSet<BeanRef> reg = new TreeSet<>();
 
     void addBean(BeanRef beanRef) {
+        rejectOnConflict(beanRef);
         reg.add(beanRef);
+    }
+
+    private void rejectOnConflict(BeanRef beanRef) {
+        for (BeanRef bean : reg) {
+            if (beanRef.conflictsWith(bean)) {
+                throw new ConflictDetected(beanRef, bean);
+            }
+        }
     }
 
     BeanRef getMatching(BeanTemplate template) {
@@ -37,5 +46,9 @@ class BeanRefStore {
             }
         }
         return null;
+    }
+
+    List<BeanRef> getAllMatching(BeanTemplate template) {
+        return reg.stream().filter(beanRef -> beanRef.matches(template)).collect(Collectors.toList());
     }
 }

@@ -18,7 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.test.referencelistener;
 
-import info.globalbus.blueprint.plugin.test.ServiceA;
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceA;
 import javax.inject.Singleton;
 import org.apache.aries.blueprint.annotation.referencelistener.Cardinality;
 import org.apache.aries.blueprint.annotation.referencelistener.ReferenceListener;

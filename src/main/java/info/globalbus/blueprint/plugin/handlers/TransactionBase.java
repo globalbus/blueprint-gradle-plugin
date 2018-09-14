@@ -20,7 +20,7 @@ import static info.globalbus.blueprint.plugin.handlers.javax.Namespaces.PATTERN_
 public abstract class TransactionBase<T extends Annotation> implements BeanAnnotationHandler<T>, MethodAnnotationHandler<T> {
     private static final String ENABLE_ANNOTATION = "transaction.enableAnnotation";
 
-    public abstract String getTransactionTypeName(T transactional);
+    protected abstract String getTransactionTypeName(T transactional);
 
     @Override
     public void handleMethodAnnotation(Class<?> clazz, List<Method> methods, ContextEnricher contextEnricher, BeanEnricher beanEnricher) {

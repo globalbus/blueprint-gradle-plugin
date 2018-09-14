@@ -36,7 +36,7 @@ class NamingHelper {
     }
 
     private static String getBeanNameFromSimpleName(String name) {
-        return name.substring(0, 1).toLowerCase() + name.substring(1, name.length());
+        return name.substring(0, 1).toLowerCase() + name.substring(1);
     }
 
 }

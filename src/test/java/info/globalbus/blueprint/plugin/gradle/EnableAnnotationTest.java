@@ -62,7 +62,7 @@ public class EnableAnnotationTest {
     private Document document;
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         beanClasses = findClasses(EnableAnnotationTest.class.getClassLoader(), Collections.singletonList(
             TxBean.class.getPackage().getName()));
     }

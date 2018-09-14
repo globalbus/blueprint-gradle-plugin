@@ -56,7 +56,7 @@ class Bean implements BeanEnricher, XmlWriter, Comparable<Bean> {
     final List<Argument> constructorArguments = new ArrayList<>();
     final Map<String, String> attributes = new HashMap<>();
     final Map<String, XmlWriter> beanContentWriters = new HashMap<>();
-    protected final ContextEnricher contextEnricher;
+    final ContextEnricher contextEnricher;
     private final Introspector introspector;
 
     Bean(Class<?> clazz, ContextEnricher contextEnricher) {
@@ -147,8 +147,8 @@ class Bean implements BeanEnricher, XmlWriter, Comparable<Bean> {
         return false;
     }
 
-    void resolveArguments(BlueprintRegistry blueprintRegistry, Class[] parameterTypes, Annotation[][]
-        parameterAnnotations) {
+    void resolveArguments(BlueprintRegistry blueprintRegistry, Class[] parameterTypes,
+        Annotation[][] parameterAnnotations) {
         for (int i = 0; i < parameterTypes.length; ++i) {
             constructorArguments.add(new Argument(blueprintRegistry, parameterTypes[i], parameterAnnotations[i]));
         }

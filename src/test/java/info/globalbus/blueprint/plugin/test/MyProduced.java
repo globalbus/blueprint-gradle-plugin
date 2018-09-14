@@ -18,6 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceA;
 import javax.inject.Inject;
 import org.springframework.context.annotation.Lazy;
 

@@ -1,5 +1,6 @@
 package info.globalbus.blueprint.plugin.gradle;
 
+import java.util.Collections;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -15,10 +16,19 @@ public class GradlePluginTest {
         Project project = ProjectBuilder.builder().build();
         project.getPlugins().apply("java");
         project.getPlugins().apply("info.globalbus.blueprint-gradle");
+        project.getExtensions().findByType(PluginSettings.class)
+            .setScanPaths(Collections.singletonList("info.globalbus.blueprint.plugin.test"));
 
-        assertTrue(project.getTasks().getByName("blueprintGenerate") instanceof BlueprintGenerate);
-        Task task = project.getTasks().getByName("blueprintGenerate");
+        final Task importMixinTask = project.getTasks().getByName("importMixin");
+        assertTrue(importMixinTask instanceof ImportMixinTask);
+        Task task = importMixinTask;
         Action<? super Task> actions = task.getActions().get(0);
+        actions.execute(task);
+
+        final Task blueprintGenerate = project.getTasks().getByName("blueprintGenerate");
+        assertTrue(blueprintGenerate instanceof BlueprintGenerate);
+        task = blueprintGenerate;
+        actions = task.getActions().get(0);
         actions.execute(task);
     }
 }

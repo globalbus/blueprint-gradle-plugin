@@ -30,7 +30,7 @@ public class ValueInjectionHandlerImpl implements ValueInjectionHandler<Value> {
 
     @Override
     public String getValue(Object annotation) {
-        Value value = Value.class.cast(annotation);
+        Value value = (Value) annotation;
         return value.value().replaceAll(":.*}", "}");
     }
 }

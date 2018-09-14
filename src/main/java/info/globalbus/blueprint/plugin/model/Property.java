@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.NamedLikeHandler;
 import org.apache.aries.blueprint.plugin.spi.XmlWriter;
@@ -33,37 +34,40 @@ import org.apache.aries.blueprint.plugin.spi.XmlWriter;
 import static info.globalbus.blueprint.plugin.model.AnnotationHelper.findName;
 import static info.globalbus.blueprint.plugin.model.NamingHelper.getBeanName;
 
+
 @EqualsAndHashCode(of = "name")
+@RequiredArgsConstructor
 class Property implements Comparable<Property>, XmlWriter {
     public final String name;
     public final String ref;
     public final String value;
     final boolean isField;
+    private final RefCollection refCollection;
 
-    private Property(String name, String ref, String value, boolean isField) {
-        this.name = name;
-        this.ref = ref;
-        this.value = value;
-        this.isField = isField;
-    }
 
     static Property create(BlueprintRegistry blueprintRegistry, Field field) {
         if (needsInject(field)) {
             String value = AnnotationHelper.findValue(field.getAnnotations());
             if (value != null) {
-                return new Property(field.getName(), null, value, true);
+                return new Property(field.getName(), null, value, true, null);
             }
+
+            RefCollection refCollection = RefCollection.getRefCollection(blueprintRegistry, field);
+            if (refCollection != null) {
+                return new Property(field.getName(), null, null, true, refCollection);
+            }
+
             String ref = getForcedRefName(field);
-            String refFromCustomeDependencyHandler = getRefFromCustomDependencyHandlers(blueprintRegistry, field, ref);
-            if (refFromCustomeDependencyHandler != null) {
-                ref = refFromCustomeDependencyHandler;
+            String refFromCustomDependencyHandler = getRefFromCustomDependencyHandlers(blueprintRegistry, field, ref);
+            if (refFromCustomDependencyHandler != null) {
+                ref = refFromCustomDependencyHandler;
             }
             if (ref != null) {
-                return new Property(field.getName(), ref, null, true);
+                return new Property(field.getName(), ref, null, true, null);
             }
             BeanRef matching = blueprintRegistry.getMatching(new BeanTemplate(field));
             ref = (matching == null) ? getDefaultRefName(field) : matching.id;
-            return new Property(field.getName(), ref, null, true);
+            return new Property(field.getName(), ref, null, true, null);
         } else {
             // Field is not a property
             return null;
@@ -95,21 +99,26 @@ class Property implements Comparable<Property>, XmlWriter {
 
         String value = AnnotationHelper.findValue(method.getAnnotations());
         if (value != null) {
-            return new Property(propertyName, null, value, false);
+            return new Property(propertyName, null, value, false, null);
         }
 
         if (needsInject(method)) {
+            RefCollection refCollection = RefCollection.getRefCollection(blueprintRegistry, method);
+            if (refCollection != null) {
+                return new Property(propertyName, null, null, true, refCollection);
+            }
+
             String ref = getForcedRefName(method);
             if (ref == null) {
                 ref = findName(method.getParameterAnnotations()[0]);
             }
-            String refFromCustomeDependencyHandler = getRefFromCustomDependencyHandlers(blueprintRegistry, method, ref);
-            if (refFromCustomeDependencyHandler != null) {
-                ref = refFromCustomeDependencyHandler;
+            String refFromCustomDependencyHandler = getRefFromCustomDependencyHandlers(blueprintRegistry, method, ref);
+            if (refFromCustomDependencyHandler != null) {
+                ref = refFromCustomDependencyHandler;
             }
 
             if (ref != null) {
-                return new Property(propertyName, ref, null, false);
+                return new Property(propertyName, ref, null, false, null);
             }
 
             for (CustomDependencyAnnotationHandler customDependencyAnnotationHandler : Handlers
@@ -118,7 +127,7 @@ class Property implements Comparable<Property>, XmlWriter {
                     [0], customDependencyAnnotationHandler.getAnnotation());
                 if (annotation != null) {
                     String generatedRef = customDependencyAnnotationHandler.handleDependencyAnnotation(method
-                        .getParameterTypes()[0], annotation, ref, blueprintRegistry);
+                        .getParameterTypes()[0], annotation, null, blueprintRegistry);
                     if (generatedRef != null) {
                         ref = generatedRef;
                         break;
@@ -126,13 +135,13 @@ class Property implements Comparable<Property>, XmlWriter {
                 }
             }
             if (ref != null) {
-                return new Property(propertyName, ref, null, false);
+                return new Property(propertyName, ref, null, false, null);
             }
 
             BeanTemplate template = new BeanTemplate(method);
             BeanRef matching = blueprintRegistry.getMatching(template);
             ref = (matching == null) ? getBeanName(method.getParameterTypes()[0]) : matching.id;
-            return new Property(propertyName, ref, null, false);
+            return new Property(propertyName, ref, null, false, null);
         }
 
         return null;
@@ -192,17 +201,20 @@ class Property implements Comparable<Property>, XmlWriter {
     }
 
     private static String makeFirstLetterLower(String name) {
-        return name.substring(0, 1).toLowerCase() + name.substring(1, name.length());
+        return name.substring(0, 1).toLowerCase() + name.substring(1);
     }
 
     @Override
     public void write(XMLStreamWriter writer) throws XMLStreamException {
-        writer.writeEmptyElement("property");
+        writer.writeStartElement("property");
         writer.writeAttribute("name", name);
         if (ref != null) {
             writer.writeAttribute("ref", ref);
         } else if (value != null) {
             writer.writeAttribute("value", value);
+        } else if (refCollection != null) {
+            refCollection.write(writer);
         }
+        writer.writeEndElement();
     }
 }

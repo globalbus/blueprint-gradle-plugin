@@ -37,8 +37,8 @@ class QualifierHelper {
     }
 
     private static Object isQualifier(Annotation ann) {
-        for (Class<? extends Annotation> qualifingAnnotationClass : Handlers.QUALIFING_ANNOTATION_CLASSES) {
-            Object annotation = ann.annotationType().getAnnotation(qualifingAnnotationClass);
+        for (Class<? extends Annotation> qualifyingAnnotationClass : Handlers.QUALIFYING_ANNOTATION_CLASSES) {
+            Object annotation = ann.annotationType().getAnnotation(qualifyingAnnotationClass);
             if (annotation != null) {
                 return annotation;
             }

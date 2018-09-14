@@ -15,5 +15,7 @@
 # limitations under the License.
 #
 
-info.globalbus.blueprint.plugin.handlers.pax.OsgiServiceHandler
-info.globalbus.blueprint.plugin.handlers.config.ConfigPropertiesHandler
+info.globalbus.blueprint.plugin.handlers.blueprint.config.ConfigPropertiesHandler
+info.globalbus.blueprint.plugin.handlers.blueprint.service.ReferenceHandler
+info.globalbus.blueprint.plugin.handlers.blueprint.service.ReferenceListHandler
+info.globalbus.blueprint.plugin.handlers.paxcdi.OsgiServiceHandler

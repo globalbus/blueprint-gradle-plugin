@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.aries.blueprint.plugin.spi.Activation;
+import org.apache.aries.blueprint.plugin.spi.Availability;
 import org.apache.aries.blueprint.plugin.spi.BlueprintConfiguration;
 
 @RequiredArgsConstructor
@@ -42,6 +43,16 @@ public class BlueprintConfigurationImpl implements BlueprintConfiguration {
     @Override
     public Activation getDefaultActivation() {
         return extension.getDefaultActivation();
+    }
+
+    @Override
+    public Availability getDefaultAvailability() {
+        return extension.getDefaultAvailability();
+    }
+
+    @Override
+    public Long getDefaultTimeout() {
+        return extension.getDefaultTimeout();
     }
 
     @Override

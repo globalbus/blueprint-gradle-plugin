@@ -4,16 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import lombok.RequiredArgsConstructor;
 import org.apache.aries.blueprint.plugin.spi.XmlWriter;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * Created by globalbus on 15.04.17.
- */
 @RequiredArgsConstructor
 public class CamelContextWriter implements XmlWriter {
     private static final String NS_CAMEL = "http://camel.apache.org/schema/blueprint";
@@ -43,7 +39,7 @@ public class CamelContextWriter implements XmlWriter {
         writer.writeAttribute("id", "properties");
         List<String> locations = new ArrayList<>();
         locations.add("blueprint:blueprint-properties");
-        writer.writeAttribute("location", locations.stream().collect(Collectors.joining(",")));
+        writer.writeAttribute("location", String.join(",", locations));
     }
 
 }

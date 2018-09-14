@@ -6,7 +6,7 @@ http://aries.apache.org/modules/blueprint-maven-plugin.html
 Options are mostly the same as in original
 
 ### Improvements
-- Faster plugin execution, using [FastClasspathScanner](https://github.com/lukehutch/fast-classpath-scanner)
+- Faster plugin execution, using [ClassGraph](https://github.com/classgraph/classgraph)
 - Support for Camel
 - Automatically add all required imports to MANIFEST, thanks to [Gradle OSGi plugin](https://docs.gradle.org/current/userguide/osgi_plugin.html)
 - Can scan packages outside of the bundle (from runtime dependencies)

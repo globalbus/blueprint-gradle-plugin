@@ -59,7 +59,7 @@ public class BlueprintTest {
     public void testLists2() {
         Blueprint blueprint = new Blueprint(blueprintConfiguration, ServiceReferences.class);
         Assert.assertEquals(1, blueprint.getBeans().size());
-        Assert.assertEquals(3, getOsgiServices(blueprint).size());
+        Assert.assertEquals(4, getOsgiServices(blueprint).size());
     }
 
     private Set<String> getOsgiServices(Blueprint blueprint) {

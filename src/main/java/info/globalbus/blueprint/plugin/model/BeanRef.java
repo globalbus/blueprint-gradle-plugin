@@ -25,7 +25,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of = "id")
 class BeanRef implements Comparable<BeanRef> {
     final String id;
-    private final Class<?> clazz;
+    final Class<?> clazz;
     private final Set<Annotation> qualifiers;
 
     BeanRef(Class<?> clazz, String id, Annotation[] qualifiers) {
@@ -44,4 +44,7 @@ class BeanRef implements Comparable<BeanRef> {
         return this.id.compareTo(other.id);
     }
 
+    boolean conflictsWith(BeanRef bean) {
+        return id.equals(bean.id) && !clazz.equals(bean.clazz);
+    }
 }

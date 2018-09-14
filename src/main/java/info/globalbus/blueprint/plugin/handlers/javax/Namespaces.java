@@ -23,12 +23,12 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class Namespaces {
-    public static final String PATTERN_NS_JPA1 = "http\\:\\/\\/aries\\.apache\\.org\\/xmlns\\/jpa\\/v1\\.(.)\\.(.)";
-    public static final String PATTERN_NS_JPA2 = "http\\:\\/\\/aries\\.apache\\.org\\/xmlns\\/jpa\\/v2\\.(.)\\.(.)";
+    static final String PATTERN_NS_JPA1 = "http\\:\\/\\/aries\\.apache\\.org\\/xmlns\\/jpa\\/v1\\.(.)\\.(.)";
+    static final String PATTERN_NS_JPA2 = "http\\:\\/\\/aries\\.apache\\.org\\/xmlns\\/jpa\\/v2\\.(.)\\.(.)";
     public static final String PATTERN_NS_TX1 = "http\\:\\/\\/aries\\.apache\\.org\\/xmlns\\/transactions\\/v1\\.(.)"
-        + "\\.(.)";
+                                                + "\\.(.)";
     public static final String PATTERN_NS_TX2 = "http\\:\\/\\/aries\\.apache\\.org\\/xmlns\\/transactions\\/v2\\.(.)"
-        + "\\.(.)";
+                                                + "\\.(.)";
     public static final String NS_TX_1_2_0 = "http://aries.apache.org/xmlns/transactions/v1.2.0";
 
     public static String getNamespaceByPattern(Set<String> namespaces, String pattern) {

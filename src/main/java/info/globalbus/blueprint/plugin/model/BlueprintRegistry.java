@@ -18,8 +18,11 @@
  */
 package info.globalbus.blueprint.plugin.model;
 
+import java.util.List;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 
 interface BlueprintRegistry extends ContextEnricher {
     BeanRef getMatching(BeanTemplate template);
+
+    List<BeanRef> getAllMatching(BeanTemplate template);
 }

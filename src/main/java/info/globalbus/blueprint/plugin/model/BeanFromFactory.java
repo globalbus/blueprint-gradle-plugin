@@ -24,6 +24,8 @@ import org.apache.aries.blueprint.plugin.spi.BeanAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.ContextEnricher;
 
 class BeanFromFactory extends Bean {
+    private static final String BLUEPRINT_BEAN_FROM_FACTORY_NAME_PROPERTY
+        = "blueprint.beanFromFactory.nameFromFactoryMethodName";
     private final Method producingMethod;
 
     BeanFromFactory(Bean factoryBean, Method factoryMethod, ContextEnricher contextEnricher) {
@@ -32,11 +34,20 @@ class BeanFromFactory extends Bean {
         if (forcedId != null) {
             this.id = forcedId;
         }
+        if (forcedId == null && shouldGetBeanNameFromMethodName(contextEnricher)) {
+            this.id = factoryMethod.getName();
+        }
         this.producingMethod = factoryMethod;
         setScope(factoryMethod);
         handleCustomBeanAnnotations();
         attributes.put("factory-ref", factoryBean.id);
         attributes.put("factory-method", producingMethod.getName());
+    }
+
+    private boolean shouldGetBeanNameFromMethodName(ContextEnricher contextEnricher) {
+        String value = contextEnricher.getBlueprintConfiguration().getCustomParameters()
+            .get(BLUEPRINT_BEAN_FROM_FACTORY_NAME_PROPERTY);
+        return Boolean.parseBoolean(value);
     }
 
     private void setScope(Method factoryMethod) {

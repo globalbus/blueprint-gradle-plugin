@@ -18,6 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceD;
 import javax.inject.Singleton;
 import org.ops4j.pax.cdi.api.OsgiService;
 

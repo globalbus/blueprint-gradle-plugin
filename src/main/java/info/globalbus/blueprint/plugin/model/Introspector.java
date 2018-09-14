@@ -29,19 +29,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Class to find uniquely-named fields declared in a class hierarchy with specified annotations.
  */
+@RequiredArgsConstructor
 final class Introspector {
     private final Class<?> originalClazz;
 
     /**
      * @param clazz the class to introspect (including those defined in parent classes).
      */
-    Introspector(Class<?> clazz) {
-        this.originalClazz = clazz;
-    }
 
     /**
      * @param requiredAnnotations annotations the fields must have

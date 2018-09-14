@@ -40,7 +40,7 @@ public class QualifierAsNamed implements NamedLikeHandler {
 
     @Override
     public String getName(Object annotation) {
-        Qualifier qualifier = Qualifier.class.cast(annotation);
+        Qualifier qualifier = (Qualifier) annotation;
         if (qualifier != null && StringUtils.isNotEmpty(qualifier.value())) {
             return qualifier.value();
         }

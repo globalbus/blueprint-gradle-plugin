@@ -40,7 +40,7 @@ public class ComponentAsNamed implements NamedLikeHandler {
 
     @Override
     public String getName(Object annotation) {
-        Component component = Component.class.cast(annotation);
+        Component component = (Component) annotation;
         if (component != null && StringUtils.isNotBlank(component.value())) {
             return component.value();
         }

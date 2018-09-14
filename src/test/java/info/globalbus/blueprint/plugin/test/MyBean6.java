@@ -18,6 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.test;
 
+import info.globalbus.blueprint.plugin.test.interfaces.ServiceA;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.springframework.context.annotation.DependsOn;
@@ -26,10 +27,7 @@ import org.springframework.context.annotation.DependsOn;
 @DependsOn
 public class MyBean6 {
 
-    @SuppressWarnings("unused")
-    private final ServiceA serviceA1;
-
     public MyBean6(@Named("my2") ServiceA serviceA1) {
-        this.serviceA1 = serviceA1;
+
     }
 }

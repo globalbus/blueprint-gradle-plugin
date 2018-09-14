@@ -25,6 +25,7 @@ import java.util.ServiceLoader;
 import lombok.experimental.UtilityClass;
 import org.apache.aries.blueprint.plugin.spi.BeanAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.BeanFinder;
+import org.apache.aries.blueprint.plugin.spi.CollectionDependencyAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.ContextInitializationHandler;
 import org.apache.aries.blueprint.plugin.spi.CustomDependencyAnnotationHandler;
 import org.apache.aries.blueprint.plugin.spi.FactoryMethodFinder;
@@ -50,8 +51,10 @@ public class Handlers {
     public static final List<FieldAnnotationHandler<? extends Annotation>> FIELD_ANNOTATION_HANDLERS = new
         ArrayList<>();
     public static final List<Class<? extends Annotation>> FACTORY_METHOD_ANNOTATION_CLASSES = new ArrayList<>();
-    public static final List<Class<? extends Annotation>> QUALIFING_ANNOTATION_CLASSES = new ArrayList<>();
+    public static final List<Class<? extends Annotation>> QUALIFYING_ANNOTATION_CLASSES = new ArrayList<>();
     public static final List<ContextInitializationHandler> CONTEXT_INITIALIZATION_HANDLERS = new ArrayList<>();
+    public static final List<CollectionDependencyAnnotationHandler<? extends Annotation>>
+        COLLECTION_DEPENDENCY_ANNOTATION_HANDLERS = new ArrayList<>();
 
     static {
         for (BeanFinder<? extends Annotation> beanFinder : ServiceLoader.load(BeanFinder.class)) {
@@ -99,13 +102,18 @@ public class Handlers {
             FACTORY_METHOD_ANNOTATION_CLASSES.add(factoryMethodFinder.getAnnotation());
         }
 
-        for (QualifingAnnotationFinder<? extends Annotation> qualifingAnnotationFinder : ServiceLoader.load
+        for (QualifingAnnotationFinder<? extends Annotation> qualifyingAnnotationFinder : ServiceLoader.load
             (QualifingAnnotationFinder.class)) {
-            QUALIFING_ANNOTATION_CLASSES.add(qualifingAnnotationFinder.getAnnotation());
+            QUALIFYING_ANNOTATION_CLASSES.add(qualifyingAnnotationFinder.getAnnotation());
         }
 
-        for (ContextInitializationHandler contextInitializationHandler : ServiceLoader.load
-            (ContextInitializationHandler.class)) {
+        for (CollectionDependencyAnnotationHandler<? extends Annotation> collectionDependencyAnnotationHandler :
+            ServiceLoader.load(CollectionDependencyAnnotationHandler.class)) {
+            COLLECTION_DEPENDENCY_ANNOTATION_HANDLERS.add(collectionDependencyAnnotationHandler);
+        }
+
+        for (ContextInitializationHandler contextInitializationHandler :
+            ServiceLoader.load(ContextInitializationHandler.class)) {
             CONTEXT_INITIALIZATION_HANDLERS.add(contextInitializationHandler);
         }
     }

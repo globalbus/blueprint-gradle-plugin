@@ -113,6 +113,10 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
         return beanRefStore.getMatching(template);
     }
 
+    public List<BeanRef> getAllMatching(BeanTemplate template) {
+        return beanRefStore.getAllMatching(template);
+    }
+
     Collection<Bean> getBeans() {
         return generatedBeans;
     }
@@ -138,9 +142,14 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
 
     public void write(XMLStreamWriter writer) throws XMLStreamException {
         writeBlueprint(writer);
+        writeTypeConverters(writer);
         writeBeans(writer);
         writeCustomWriters(writer);
         writer.writeEndElement();
+    }
+
+    private void writeTypeConverters(XMLStreamWriter writer) throws XMLStreamException {
+        new CustomTypeConverterWriter(beanRefStore).write(writer);
     }
 
     private void writeCustomWriters(XMLStreamWriter writer) throws XMLStreamException {
@@ -162,8 +171,13 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
         writer.writeStartElement("blueprint");
         writer.writeDefaultNamespace(NS_BLUEPRINT);
         if (blueprintConfiguration.getDefaultActivation() != null) {
-            writer.writeAttribute("default-activation", blueprintConfiguration.getDefaultActivation().name()
-                .toLowerCase());
+            writer.writeAttribute("default-activation", blueprintConfiguration.getDefaultActivation().toString());
+        }
+        if (blueprintConfiguration.getDefaultAvailability() != null) {
+            writer.writeAttribute("default-availability", blueprintConfiguration.getDefaultAvailability().toString());
+        }
+        if (blueprintConfiguration.getDefaultTimeout() != null) {
+            writer.writeAttribute("default-timeout", blueprintConfiguration.getDefaultTimeout().toString());
         }
     }
 

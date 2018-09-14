@@ -15,12 +15,13 @@
 # limitations under the License.
 #
 
-info.globalbus.blueprint.plugin.handlers.pax.OsgiServiceProviderHandler
-info.globalbus.blueprint.plugin.handlers.spring.LazyAttributeResolver
-info.globalbus.blueprint.plugin.handlers.spring.DependsOnAttributeResolver
-info.globalbus.blueprint.plugin.handlers.spring.SpringTransactionalFactory
+info.globalbus.blueprint.plugin.handlers.blueprint.bean.BeanHandler
+info.globalbus.blueprint.plugin.handlers.blueprint.config.ConfigAnnotationHandler
+info.globalbus.blueprint.plugin.handlers.blueprint.referencelistener.ReferenceListenerHandler
+info.globalbus.blueprint.plugin.handlers.blueprint.service.ServiceHandler
+info.globalbus.blueprint.plugin.handlers.javax.CdiTransactionFactory
 info.globalbus.blueprint.plugin.handlers.javax.JavaxTransactionFactory
-info.globalbus.blueprint.plugin.handlers.javax.cdi.CdiTransactionFactory
-info.globalbus.blueprint.plugin.handlers.config.ConfigAnnotationHandler
-info.globalbus.blueprint.plugin.handlers.referencelistener.ReferenceListenerHandler
-info.globalbus.blueprint.plugin.handlers.bean.BeanHandler
+info.globalbus.blueprint.plugin.handlers.paxcdi.OsgiServiceProviderHandler
+info.globalbus.blueprint.plugin.handlers.spring.DependsOnAttributeResolver
+info.globalbus.blueprint.plugin.handlers.spring.LazyAttributeResolver
+info.globalbus.blueprint.plugin.handlers.spring.SpringTransactionalFactory
