@@ -21,7 +21,7 @@ gradlePlugin {
 sourceCompatibility = 1.8
 
 group 'info.globalbus'
-version '0.2.0'
+version '0.2.1'
 
 repositories {
     mavenCentral()
@@ -44,7 +44,6 @@ pluginBundle {
 
 dependencies {
     compile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.annotation.impl', version: '1.0.1'
-    compile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.annotation.api', version: '1.0.1'
     testCompile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.api', version: '1.0.1'
     testCompile group: 'org.apache.aries.blueprint', name: 'org.apache.aries.blueprint.core', version: '1.10.0'
     testCompile group: 'org.apache.aries.transaction', name: 'org.apache.aries.transaction.blueprint', version: '1.1.1'

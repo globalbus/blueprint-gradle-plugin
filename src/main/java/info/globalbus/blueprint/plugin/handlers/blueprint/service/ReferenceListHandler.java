@@ -18,6 +18,7 @@
  */
 package info.globalbus.blueprint.plugin.handlers.blueprint.service;
 
+import info.globalbus.blueprint.plugin.model.Blueprint;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -53,6 +54,8 @@ public class ReferenceListHandler implements CustomDependencyAnnotationHandler<R
         contextEnricher.addBean(id, clazz);
         contextEnricher.addBlueprintContentWriter(getWriterId(id, referenceList.referenceInterface()),
             getXmlWriter(id, referenceList, contextEnricher));
+        Blueprint blueprint = (Blueprint) contextEnricher;
+        blueprint.getInterfaces().add(clazz.getPackage().getName());
         return id;
     }
 

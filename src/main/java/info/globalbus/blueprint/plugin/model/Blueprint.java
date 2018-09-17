@@ -186,8 +186,9 @@ public class Blueprint implements BlueprintRegistry, ContextEnricher, XmlWriter 
     }
 
     public Set<String> getGeneratedPackages() {
-        Set<String> beans = generatedBeans.stream().map(b -> b.clazz.getPackage().getName()).collect(Collectors.toSet());
+        List<String> beans =
+            generatedBeans.stream().map(b -> b.clazz.getPackage().getName()).collect(Collectors.toList());
         beans.addAll(interfaces);
-        return beans;
+        return beans.stream().filter(v -> !v.startsWith("java.")).collect(Collectors.toSet());
     }
 }
